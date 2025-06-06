@@ -22,27 +22,15 @@
     >
       <div>
         <div class="flex items-center bg-[#131811] p-4 pb-2 justify-between">
-          <div style="text-align: center;" class="flex-1">
-            <img src="assets/demicube.png" />
-          </div>
-          <div class="flex w-12 items-center justify-end">
-            <button
-              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0"
-            >
-              <div class="text-white" data-icon="Question" data-size="24px" data-weight="regular">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                  <path
-                    d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
-                  ></path>
-                </svg>
-              </div>
-            </button>
-          </div>
+          <!-- Help button removed from here -->
         </div>
         <!-- New Outer Wrapper Div -->
         <div class="w-full">
           <!-- New Middle Column Div -->
           <div class="w-full md:w-1/3 mx-auto">
+            <div style="text-align: center;">
+              <img src="assets/demicube.png" />
+            </div>
             <h1 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 text-center pb-3 pt-5">nCode</h1>
             <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">Encrypt and decrypt strings with ease.</p>
             <div class="pb-3">
@@ -59,7 +47,10 @@
               </div>
             </div>
             <div id="stringEncryptionContent">
-              <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4">Use this tool to encrypt or decrypt text strings using a password. Ensure you remember your password, as it's the only way to retrieve your original data.</p>
+              <div class="flex items-center justify-center px-4 pb-3 pt-1">
+                <p class="text-white text-base font-normal leading-normal">Use this tool to encrypt or decrypt text strings using a password. Ensure you remember your password, as it's the only way to retrieve your original data.</p>
+                <button id="helpButtonStringEncryption" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
+              </div>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <textarea
@@ -110,9 +101,12 @@
               </div>
             </div>
             <div id="passwordManagerContent" style="display:none;">
-              <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4">
-                Manage your passwords securely with nCode's Password Manager. As long as you remember your Manager Password and site name, you can recover your passwords.
-              </p>
+              <div class="flex items-center justify-start px-4 pb-3 pt-1">
+                <p class="text-white text-base font-normal leading-normal">
+                  Manage your passwords securely with nCode's Password Manager. As long as you remember your Manager Password and site name, you can recover your passwords.
+                </p>
+                <button id="helpButtonPasswordManager" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
+              </div>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <input
@@ -162,7 +156,10 @@
               </div>
             </div>
             <div id="fileEncryptionContent" style="display:none;">
-              <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4">Encrypt your files with a password to protect them from unauthorized access.</p>
+              <div class="flex items-center justify-start px-4 pb-3 pt-1">
+                <p class="text-white text-base font-normal leading-normal">Encrypt your files with a password to protect them from unauthorized access.</p>
+                <button id="helpButtonFileEncryption" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
+              </div>
               <div class="flex px-4 py-3">
                 <button
                   class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em]"

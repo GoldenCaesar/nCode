@@ -46,51 +46,191 @@
         <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">Encrypt and decrypt strings with ease.</p>
         <div class="pb-3">
           <div class="flex border-b border-[#43543b] px-4 gap-8">
-            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-white text-white pb-[13px] pt-4" href="#">
+            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-white text-white pb-[13px] pt-4" href="javascript:void(0);" onclick="showContent('stringEncryptionContent', this)">
               <p class="text-white text-sm font-bold leading-normal tracking-[0.015em]">String Encryption</p>
             </a>
-            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="password_manager.html">
+            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="javascript:void(0);" onclick="showContent('passwordManagerContent', this)">
               <p class="text-[#a6ba9c] text-sm font-bold leading-normal tracking-[0.015em]">Password Manager</p>
             </a>
-            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="file_encryption.html">
+            <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="javascript:void(0);" onclick="showContent('fileEncryptionContent', this)">
               <p class="text-[#a6ba9c] text-sm font-bold leading-normal tracking-[0.015em]">File Encryption</p>
             </a>
           </div>
         </div>
-        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-          <label class="flex flex-col min-w-40 flex-1">
-            <textarea
-              placeholder="String"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
-            ></textarea>
-          </label>
+        <div id="stringEncryptionContent">
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <textarea
+                placeholder="String"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+              ></textarea>
+            </label>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <input
+                placeholder="Password"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <textarea
+                placeholder="Result"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+              ></textarea>
+            </label>
+          </div>
+          <div class="flex px-4 py-3 justify-end">
+            <button
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
+            >
+              <span class="truncate">Process</span>
+            </button>
+          </div>
         </div>
-        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-          <label class="flex flex-col min-w-40 flex-1">
-            <input
-              placeholder="Password"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
-              value=""
-            />
-          </label>
+        <div id="passwordManagerContent" style="display:none;">
+          <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4">
+            Manage your passwords securely with nCode's Password Manager. Encrypt and decrypt your passwords for enhanced security.
+          </p>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <input
+                placeholder="Manager Password"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] h-14 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Sites</h3>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <input
+                placeholder="Site 1"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] h-14 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex items-center gap-4 bg-[#141613] px-4 min-h-14">
+            <div class="text-white flex items-center justify-center rounded-lg bg-[#2f342d] shrink-0 size-10" data-icon="Plus" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
+              </svg>
+            </div>
+            <p class="text-white text-base font-normal leading-normal flex-1 truncate">Add Site</p>
+          </div>
+          <div class="flex px-4 py-3">
+            <button
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 flex-1 bg-[#e2efdb] text-[#141613] text-sm font-bold leading-normal tracking-[0.015em]"
+            >
+              <span class="truncate">Process</span>
+            </button>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <textarea
+                placeholder="Result"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] min-h-36 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
+              ></textarea>
+            </label>
+          </div>
         </div>
-        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-          <label class="flex flex-col min-w-40 flex-1">
-            <textarea
-              placeholder="Result"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
-            ></textarea>
-          </label>
-        </div>
-        <div class="flex px-4 py-3 justify-end">
-          <button
-            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
-          >
-            <span class="truncate">Process</span>
-          </button>
+        <div id="fileEncryptionContent" style="display:none;">
+          <p class="text-white text-base font-normal leading-normal pb-3 pt-1 px-4">Encrypt your files with a password to protect them from unauthorized access.</p>
+          <div class="flex px-4 py-3">
+            <button
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+            >
+              <span class="truncate">Upload File</span>
+            </button>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <input
+                placeholder="Password"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#44543b] bg-[#1f271b] focus:border-[#44543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex px-4 py-3">
+            <button
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 flex-1 bg-[#46b809] text-[#131811] text-base font-bold leading-normal tracking-[0.015em]"
+            >
+              <span class="truncate">Process</span>
+            </button>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <p class="text-white text-base font-medium leading-normal pb-2">Result</p>
+              <textarea
+                placeholder="Result"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#44543b] bg-[#1f271b] focus:border-[#44543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+              ></textarea>
+            </label>
+          </div>
         </div>
       </div>
       <div><div class="h-5 bg-[#131811]"></div></div>
     </div>
+    <script>
+      function showContent(contentIdToShow, clickedLink) {
+        // Get all content sections
+        const stringEncryptionContent = document.getElementById('stringEncryptionContent');
+        const passwordManagerContent = document.getElementById('passwordManagerContent');
+        const fileEncryptionContent = document.getElementById('fileEncryptionContent');
+
+        // Hide all content sections
+        if (stringEncryptionContent) stringEncryptionContent.style.display = 'none';
+        if (passwordManagerContent) passwordManagerContent.style.display = 'none';
+        if (fileEncryptionContent) fileEncryptionContent.style.display = 'none';
+
+        // Show the selected content section
+        const selectedContent = document.getElementById(contentIdToShow);
+        if (selectedContent) {
+          // Attempt to restore original display style if known, otherwise default to 'block'
+          // For these specific elements, they are divs that don't rely on flex for their direct display type.
+          selectedContent.style.display = 'block';
+        }
+
+        // Update navigation link styles
+        const navLinks = document.querySelectorAll('.flex.border-b.border-[#43543b].px-4.gap-8 > a');
+        navLinks.forEach(link => {
+          link.classList.remove('border-b-white', 'text-white');
+          link.classList.add('border-b-transparent', 'text-[#a6ba9c]');
+          // Also update the child <p> tag's text color
+          const pTag = link.querySelector('p');
+          if (pTag) {
+            pTag.classList.remove('text-white');
+            pTag.classList.add('text-[#a6ba9c]');
+          }
+        });
+
+        // Apply active style to the clicked link
+        clickedLink.classList.remove('border-b-transparent', 'text-[#a6ba9c]');
+        clickedLink.classList.add('border-b-white', 'text-white');
+        const clickedPTag = clickedLink.querySelector('p');
+        if (clickedPTag) {
+          clickedPTag.classList.remove('text-[#a6ba9c]');
+          clickedPTag.classList.add('text-white');
+        }
+      }
+
+      // Initially, ensure the correct content section is displayed based on the default active link
+      // The "String Encryption" link is active by default.
+      document.addEventListener('DOMContentLoaded', function() {
+        // No need to explicitly call showContent here if stringEncryptionContent is visible by default
+        // and others are hidden by default, and the classes are already set in HTML for the default state.
+        // However, if we want to be very explicit or if default HTML state might not be guaranteed:
+        const initialActiveLink = document.querySelector('.flex.border-b.border-[#43543b].px-4.gap-8 > a.border-b-white');
+        if (initialActiveLink) {
+          // The stringEncryptionContent is already visible by default due to not having display:none
+          // This part is mostly to ensure the function is robust if we decide to hide all by default later.
+        }
+      });
+    </script>
   </body>
 </html>

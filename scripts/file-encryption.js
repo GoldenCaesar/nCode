@@ -289,16 +289,31 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const isDecryptMode = fileModeToggle.checked;
                 let fileNameToDownload;
+                const newNCodeExtension = ".nCode"; // Changed from .ncde
+                const nCodeEncryptedPrefix = "nCode_encrypted_";
 
                 if (isDecryptMode) {
-                    let name = originalFileName;
-                    if (name.toLowerCase().endsWith('.ncde')) {
-                        name = name.substring(0, name.length - 5);
+                    let name = originalFileName; // This is the name of the file selected for decryption.
+
+                    // Check if it matches the full "nCode_encrypted_... .nCode" pattern
+                    if (name.startsWith(nCodeEncryptedPrefix) && name.toLowerCase().endsWith(newNCodeExtension.toLowerCase())) {
+                        name = name.substring(nCodeEncryptedPrefix.length, name.length - newNCodeExtension.length);
                     }
-                    if (!name) name = "decrypted_file"; // Default if original was just ".ncde" or empty
-                    fileNameToDownload = name;
+                    // Else, check if it just ends with ".nCode" (e.g., user encrypted, renamed, then decrypts)
+                    else if (name.toLowerCase().endsWith(newNCodeExtension.toLowerCase())) {
+                        name = name.substring(0, name.length - newNCodeExtension.length);
+                    }
+                    // Otherwise, the name is used as is (e.g., user is decrypting a file not ending in .nCode)
+
+                    if (!name) { // If stripping resulted in an empty name (e.g., original was ".nCode")
+                        name = "file"; // Default base name
+                    }
+                    fileNameToDownload = "decrypted_" + name;
+
                 } else { // Encrypt mode
-                    fileNameToDownload = "nCode_encrypted_" + (originalFileName.replace(/[\s]/g, '_') || "file") + ".ncde";
+                    // Replace spaces in originalFileName for a cleaner look, handle if originalFileName is empty
+                    const baseName = originalFileName.replace(/[\s]/g, '_') || "file";
+                    fileNameToDownload = nCodeEncryptedPrefix + baseName + newNCodeExtension;
                 }
 
                 const url = URL.createObjectURL(processedFileBlob);

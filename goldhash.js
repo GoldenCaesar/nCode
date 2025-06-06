@@ -1,22 +1,20 @@
-async function goldHash(d) {
-    var inputText = $(".textEncodeInput").val();
-    var password = $(".passwordEncodeInput").val();
-    var resultDiv = $(".result"); // This is the <p class="result"> element
+async function goldHash() {
+    var inputText = document.getElementById("stringInput").value;
+    var password = document.getElementById("passwordInput").value;
+    var resultOutputElement = document.getElementById("resultOutput");
     var skipButton = $(".skip-animation-button"); // Select the skip button
     var outputText = "";
     let animationSkipped = false; // Flag to control skipping
+    const isDecodeMode = document.getElementById("modeToggle").checked; // true if dCode (checked), false if nCode (unchecked)
 
-    
-
-      
     // Clear previous results and messages
-    resultDiv.empty();
+    resultOutputElement.value = '';
     $(".copymessage").text(""); // Clear any previous copy message
     skipButton.hide(); // Hide the skip button initially
 
     if (inputText && inputText.trim() !== "") {
         try {
-            if (d) { // True for decode
+            if (isDecodeMode) { // True for decode
                 outputText = await ddCode(inputText, password);
             } else { // False for encode
                 outputText = await nnCode(inputText, password);
@@ -38,17 +36,17 @@ async function goldHash(d) {
     if (outputText && outputText.length > 0) {
         let i = 0;
         const speed = 25; // Typing speed in milliseconds (e.g., 50ms)
-        const textContainer = $('<span id="typed-text"></span>'); // Span to hold the text
-        const cursorElement = $('<span class="typing-cursor"></span>'); // The visual cursor
+        // const textContainer = $('<span id="typed-text"></span>'); // Span to hold the text - REMOVED
+        // const cursorElement = $('<span class="typing-cursor"></span>'); // The visual cursor - REMOVED
 
-        resultDiv.append(textContainer).append(cursorElement); // Add text container and cursor to the result paragraph
+        // resultDiv.append(textContainer).append(cursorElement); // Add text container and cursor to the result paragraph - REMOVED
         skipButton.show(); // Show the skip button when animation starts
 
         // Event listener for the skip button
         skipButton.off('click').on('click', function() { // .off() to prevent multiple handlers if goldHash is called multiple times
             animationSkipped = true;
-            textContainer.text(outputText); // Immediately display full text
-            cursorElement.remove(); // Remove cursor
+            resultOutputElement.value = outputText; // Immediately display full text
+            // cursorElement.remove(); // Remove cursor - REMOVED
             skipButton.hide(); // Hide the skip button after skipping
         });
 
@@ -59,7 +57,7 @@ async function goldHash(d) {
             }
 
             if (i < outputText.length) {
-                textContainer.append(document.createTextNode(outputText.charAt(i)));
+                resultOutputElement.value += outputText.charAt(i);
                 i++;
                 setTimeout(typeCharacter, speed);
             } else {
@@ -72,8 +70,8 @@ async function goldHash(d) {
         typeCharacter(); // Start the typing animation
     } else if (outputText === "") {
         // If outputText is an empty string
-        // resultDiv will remain empty.
-        // resultDiv.text("[No output]");
+        // resultOutputElement will remain empty.
+        // resultOutputElement.value = "[No output]";
     }
     // If outputText was "ATTENTION: Input string is empty..." it will be typed out by the logic above.
 }
@@ -81,12 +79,12 @@ async function goldHash(d) {
 
 
 $(function() {
-  document.getElementById("encodeButton").addEventListener("click", function() {
-    goldHash(false);
-});
-  document.getElementById("decodeButton").addEventListener("click", function() {
-    goldHash(true)
-});
+  // document.getElementById("encodeButton").addEventListener("click", function() {
+  //   goldHash(false);
+  // });
+  // document.getElementById("decodeButton").addEventListener("click", function() {
+  //   goldHash(true)
+  // });
 
 // The provided selectText function (unchanged)
 function selectText(nodeId) {
@@ -108,13 +106,13 @@ function selectText(nodeId) {
 }
 
 $('#copyBtn').click(function () {
-    const resultDiv = document.querySelector(".result #typed-text"); // Select the typed text itself
+    const resultOutputElement = document.getElementById("resultOutput"); // Changed to use the new ID
     const copyMessagePara = $(".copymessage");
 
-    if (resultDiv && resultDiv.textContent.trim() !== "") {
+    if (resultOutputElement && resultOutputElement.value.trim() !== "") { // Changed to check value of textarea
         // Temporarily create a textarea to copy from, as execCommand works best with inputs/textareas
         const tempTextArea = $('<textarea>');
-        tempTextArea.val(resultDiv.textContent); // Get text content from the span
+        tempTextArea.val(resultOutputElement.value); // Get text content from the textarea
         $('body').append(tempTextArea);
         tempTextArea.select();
 
@@ -140,20 +138,27 @@ $('#copyBtn').click(function () {
 });
 
 $("#clearBtn").click(function () {
-  $("#str").val('');
-  $("#pass").val('');
-  $(".result").empty(); // Clear the result area, including any typed text and cursor
+  // Updated to clear new input fields if needed, or remove if not applicable
+  // $("#str").val(''); // This was for old elements, stringInput is new
+  // $("#pass").val(''); // This was for old elements, passwordInput is new
+  document.getElementById("stringInput").value = ''; // Clear new string input
+  document.getElementById("passwordInput").value = ''; // Clear new password input
+  document.getElementById("resultOutput").value = ''; // Clear new result output
   $(".copymessage").text("");
 });
 
 setTimeout(function(){
-load();
-$("html, body").animate({ scrollTop: $(document).height() }, "slow");
+// load(); // Assuming load() is defined elsewhere or can be removed if not essential for this scope
+$("html, body").animate({ scrollTop: $(document).height() }, "slow"); // This might be for a specific page structure
 	}, 1000);
 });
 
 
-
+if (document.getElementById("processButton")) {
+    document.getElementById("processButton").addEventListener("click", function() {
+      goldHash(); // Call the modified goldHash function
+    });
+}
 
 
 // goodluck lol

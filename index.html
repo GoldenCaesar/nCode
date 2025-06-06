@@ -58,6 +58,13 @@
                 <p class="text-white text-base font-normal leading-normal">Use this tool to encrypt or decrypt text strings using a password. Ensure you remember your password, as it's the only way to retrieve your original data.</p>
                 <button id="helpButtonStringEncryption" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
               </div>
+              <p id="stringEncryptionHelpText" class="text-white text-sm font-normal leading-normal px-4 py-2 bg-[#1f271b] rounded mt-2 mx-4" style="display: none;">
+                <strong>String Encryption Help:</strong><br>
+                This tab allows you to encrypt any text string using a password. The same password is required to decrypt the string.
+                The encryption process (AES-GCM) ensures that the encrypted output is unique each time, enhancing security.
+                A 'Goldhash' (SHA-256 based) of your original string and password is shown during encryption. Upon successful decryption, the Goldhash of the decrypted string and password is displayed. Matching Goldhashes confirm content integrity.
+                All operations are client-side. Encryption uses AES-GCM with a key derived via PBKDF2.
+              </p>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <textarea
@@ -94,6 +101,7 @@
                 </button>
               </div>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <p id="stringGoldhashResult" class="text-white text-sm font-mono leading-normal py-2 px-1"></p>
                 <label class="flex flex-col min-w-40 flex-1">
                   <textarea
                     id="resultOutput"
@@ -114,6 +122,13 @@
                 </p>
                 <button id="helpButtonPasswordManager" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
               </div>
+              <p id="passwordManagerHelpText" class="text-white text-sm font-normal leading-normal px-4 py-2 bg-[#1f271b] rounded mt-2 mx-4" style="display: none;">
+                <strong>Password Manager Help:</strong><br>
+                Generate strong, unique passwords for websites using a 'Manager Password' and a 'Site Name'.
+                The same Manager Password and Site Name will always produce the same site-specific password.
+                You can copy the generated list of site names and passwords and encrypt it using the String Encryption or File Encryption tabs for secure storage.
+                Password generation uses a deterministic SHA-256 hashing method.
+              </p>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <input
@@ -167,6 +182,12 @@
                 <p class="text-white text-base font-normal leading-normal">Encrypt your files with a password to protect them from unauthorized access.</p>
                 <button id="helpButtonFileEncryption" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
               </div>
+              <p id="fileEncryptionHelpText" class="text-white text-sm font-normal leading-normal px-4 py-2 bg-[#1f271b] rounded mt-2 mx-4" style="display: none;">
+                <strong>File Encryption Help:</strong><br>
+                Encrypt any file from your computer using a password. The encrypted file will download with a '.nCode' extension. Your original file remains unchanged.
+                A 'Goldhash' (SHA-256 based) of the original file and password is shown during encryption. Upon successful decryption, the Goldhash of the decrypted file and password is displayed. Matching Goldhashes confirm file integrity.
+                All operations are client-side. Encryption uses AES-GCM in chunks with a key derived via PBKDF2.
+              </p>
               <div class="flex px-4 py-3">
                 <input type="file" id="fileInput" style="display: none;" />
                 <button
@@ -206,6 +227,7 @@
                 <div id="fileProgressBar" class="h-2 bg-green-500 rounded w-0"></div>
               </div>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <p id="fileGoldhashResult" class="text-white text-sm font-mono leading-normal py-2 px-1"></p>
                 <label class="flex flex-col min-w-40 flex-1">
                   <p class="text-white text-base font-medium leading-normal pb-2">Result</p>
                   <textarea
@@ -240,17 +262,14 @@
         // Show the selected content section
         const selectedContent = document.getElementById(contentIdToShow);
         if (selectedContent) {
-          // Attempt to restore original display style if known, otherwise default to 'block'
-          // For these specific elements, they are divs that don't rely on flex for their direct display type.
           selectedContent.style.display = 'block';
         }
 
         // Update navigation link styles
-        const allNavLinks = clickedLink.parentNode.querySelectorAll('a'); // Get all sibling 'a' tags
+        const allNavLinks = clickedLink.parentNode.querySelectorAll('a');
 
         allNavLinks.forEach(link => {
           if (link !== clickedLink) {
-            // If this link is not the clicked link, ensure it's set to inactive
             if (link.classList.contains('border-b-white') || link.classList.contains('text-white')) {
               link.classList.remove('border-b-white', 'text-white');
               link.classList.add('border-b-transparent', 'text-[#a6ba9c]');
@@ -263,8 +282,6 @@
           }
         });
 
-        // Apply active style to the clicked link
-        // Ensure inactive styles are removed and active styles are added
         clickedLink.classList.remove('border-b-transparent', 'text-[#a6ba9c]');
         clickedLink.classList.add('border-b-white', 'text-white');
         const clickedPTag = clickedLink.querySelector('p');
@@ -274,21 +291,58 @@
         }
       }
 
-      // Initially, the "String Encryption" tab is active by default as set in HTML.
-      // The HTML correctly reflects the active state for the "String Encryption" tab:
-      // <a> has border-b-white, text-white
-      // <p> has text-white
-      // Other tabs correctly have border-b-transparent, text-[#a6ba9c]
-      // No specific JavaScript action is required on DOMContentLoaded to set this initial state
-      // as the static HTML already defines it.
       document.addEventListener('DOMContentLoaded', function() {
-        // The "String Encryption" content is visible by default.
-        // The corresponding link is styled as active in the HTML.
-        // No dynamic changes needed here for initial setup if HTML is correct.
+        // Default tab setup is handled by existing HTML.
       });
     </script>
     <script src="scripts/goldhash.js"></script>
     <script src="scripts/password-manager.js"></script>
     <script src="scripts/file-encryption.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Helper function to toggle visibility
+        function toggleHelpText(buttonId, textId) {
+            const button = document.getElementById(buttonId);
+            const textElement = document.getElementById(textId);
+            if (button && textElement) {
+                button.addEventListener('click', function() {
+                    if (textElement.style.display === 'none') {
+                        textElement.style.display = 'block';
+                    } else {
+                        textElement.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Setup toggles for each help section
+        toggleHelpText('helpButtonStringEncryption', 'stringEncryptionHelpText');
+        toggleHelpText('helpButtonPasswordManager', 'passwordManagerHelpText');
+        toggleHelpText('helpButtonFileEncryption', 'fileEncryptionHelpText');
+
+        // Also, ensure help text is hidden when tabs are switched
+        // This needs to be part of the same DOMContentLoaded or a subsequent one.
+        // The existing showContent function is global, so we can access it.
+        // However, to ensure this runs after initial tab setup, it's fine here.
+        // It's better to integrate this into the existing showContent or make it more robust.
+        // For now, this will attach to the links.
+        const navLinks = document.querySelectorAll('a[onclick^="showContent"]');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Hide all help texts when a tab is changed
+                const allHelpTexts = [
+                    document.getElementById('stringEncryptionHelpText'),
+                    document.getElementById('passwordManagerHelpText'),
+                    document.getElementById('fileEncryptionHelpText')
+                ];
+                allHelpTexts.forEach(helpText => {
+                    if (helpText && helpText.style.display !== 'none') { // Check if it's not already none
+                        helpText.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+    </script>
   </body>
 </html>

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileModeToggle = document.getElementById('fileModeToggle'); // true for dCode (decrypt), false for nCode (encrypt)
     const downloadFileButton = document.getElementById('downloadFileButton');
     const clearFileButton = document.getElementById('clearFileButton');
+    const fileGoldhashResultEl = document.getElementById('fileGoldhashResult'); // Goldhash display element
 
     let selectedFile = null;
     let processedFileParts = []; // Encryption: [{salt}, {iv, data}, ...], Decryption: [ArrayBuffer_chunk, ...]
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('File selected:', selectedFile.name);
                 if (fileResultOutput) fileResultOutput.value = `File selected: ${selectedFile.name}\nSize: ${selectedFile.size} bytes. Ready for processing.`;
                 if (fileProgressBar) fileProgressBar.style.width = '0%';
+                if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = ''; // Clear Goldhash
                 clearProcessedData(); // Clear previous results
             }
         });
@@ -105,6 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function processFileInChunks(file, password, isDecryptMode) {
+        if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = ''; // Clear previous Goldhash
+
         if (!file || !password) {
             if (fileResultOutput) fileResultOutput.value = "File and password are required.";
             return;
@@ -141,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentOffset += IV_LENGTH;
 
                     const remainingFileSize = totalFileSize - currentOffset;
-                    // Determine encrypted data size: CHUNK_SIZE of original plaintext + TAG_LENGTH, or whatever is left for the last chunk.
                     const expectedPlaintextChunkSize = Math.min(CHUNK_SIZE, remainingFileSize - TAG_LENGTH);
                     if (expectedPlaintextChunkSize < 0) throw new Error("Truncated file: not enough data for encrypted content beyond IV.");
 
@@ -154,20 +157,47 @@ document.addEventListener('DOMContentLoaded', () => {
                     const decryptedChunk = await decryptChunk(key, encryptedDataWithTag, iv);
                     decryptedPlaintextChunks.push(decryptedChunk);
 
-                    updateProgress(10 + (currentOffset / totalFileSize) * 85); // Progress from 10% to 95%
-                    await new Promise(resolve => setTimeout(resolve, 0)); // Yield
+                    updateProgress(10 + (currentOffset / totalFileSize) * 85);
+                    await new Promise(resolve => setTimeout(resolve, 0));
                 }
-                processedFileParts = decryptedPlaintextChunks; // Store array of ArrayBuffers
+                processedFileParts = decryptedPlaintextChunks;
                 operationSuccessful = true;
+
+                if (operationSuccessful && processedFileParts.length > 0) {
+                    const fullDecryptedBuffer = processedFileParts.reduce((acc, chunk) => {
+                        const tmp = new Uint8Array(acc.byteLength + chunk.byteLength);
+                        tmp.set(new Uint8Array(acc), 0);
+                        tmp.set(new Uint8Array(chunk), acc.byteLength);
+                        return tmp.buffer;
+                    }, new ArrayBuffer(0));
+
+                    try {
+                        const goldhashValue = await calculateGoldhash(fullDecryptedBuffer, password); // calculateGoldhash is global
+                        if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = goldhashValue;
+                    } catch (ghError) {
+                        console.error("Error calculating goldhash for decryption:", ghError);
+                        if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = "goldhash: error during calculation";
+                    }
+                }
                 if (fileResultOutput) fileResultOutput.value += "Decryption complete.\n";
 
             } else {
                 // --- ENCRYPTION ---
+                if (fileResultOutput) fileResultOutput.value += "Calculating Goldhash for original file...\n";
+                try {
+                    const originalFileBuffer = await file.arrayBuffer();
+                    const goldhashValue = await calculateGoldhash(originalFileBuffer, password); // calculateGoldhash is global
+                    if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = goldhashValue;
+                } catch (ghError) {
+                    console.error("Error calculating goldhash for encryption:", ghError);
+                    if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = "goldhash: error during calculation";
+                }
+
                 if (fileResultOutput) fileResultOutput.value += "Generating salt and deriving key...\n";
                 const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
-                processedFileParts.push({ salt: salt }); // Store salt as the first part
+                processedFileParts.push({ salt: salt });
                 const key = await deriveKeyFromPassword(password, salt);
-                updateProgress(10); // Key derived
+                updateProgress(10);
 
                 if (fileResultOutput) fileResultOutput.value += "Encrypting file content...\n";
                 let currentOffset = 0;
@@ -180,26 +210,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentOffset += plaintextChunkSize;
 
                     const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
-                    const encryptedData = await encryptChunk(key, plaintextChunk, iv); // includes tag
+                    const encryptedData = await encryptChunk(key, plaintextChunk, iv);
                     processedFileParts.push({ iv: iv, data: encryptedData });
                     chunksProcessed++;
-                    updateProgress(10 + (chunksProcessed / totalPlaintextChunks) * 85); // Progress from 10% to 95%
-                    await new Promise(resolve => setTimeout(resolve, 0)); // Yield
+                    updateProgress(10 + (chunksProcessed / totalPlaintextChunks) * 85);
+                    await new Promise(resolve => setTimeout(resolve, 0));
                 }
                 operationSuccessful = true;
                 if (fileResultOutput) fileResultOutput.value += "Encryption complete. Click Download File to save.\n";
             }
 
             prepareDownloadableBlob(isDecryptMode);
-            if (fileResultOutput && isDecryptMode && operationSuccessful) {
-                // Try to display decrypted text
-                const fullDecryptedBuffer = processedFileParts.reduce((acc, chunk) => {
+            if (fileResultOutput && isDecryptMode && operationSuccessful && processedFileParts.length > 0) {
+                // Try to display decrypted text (already have fullDecryptedBuffer from Goldhash calculation)
+                const fullDecryptedBuffer = processedFileParts.reduce((acc, chunk) => { // Re-calculate or pass from above if possible
                     const tmp = new Uint8Array(acc.byteLength + chunk.byteLength);
                     tmp.set(new Uint8Array(acc), 0);
                     tmp.set(new Uint8Array(chunk), acc.byteLength);
                     return tmp.buffer;
                 }, new ArrayBuffer(0));
-
                 try {
                     const textDecoder = new TextDecoder('utf-8', { fatal: true });
                     const decryptedText = textDecoder.decode(fullDecryptedBuffer);
@@ -214,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("File processing error:", error);
             if (fileResultOutput) fileResultOutput.value += `\nError: ${error.message}\nProcessing failed.`;
-            updateProgress(0); // Reset on error
+            if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = 'goldhash: error during processing'; // Set Goldhash error
+            updateProgress(0);
             clearProcessedData();
              operationSuccessful = false;
         } finally {
@@ -230,9 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isDecryptMode) {
-            // processedFileParts contains ArrayBuffers of decrypted plaintext
             processedFileBlob = new Blob(processedFileParts, { type: 'application/octet-stream' });
-        } else { // Encryption mode
+        } else {
             const blobPartsArray = [];
             const saltPart = processedFileParts.find(p => p.salt);
             if (saltPart) {
@@ -240,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.error("Salt not found in processed parts for encryption!");
                 processedFileBlob = null;
-                return; // Cannot create valid encrypted file without salt
+                return;
             }
 
             processedFileParts.filter(p => p.iv && p.data).forEach(part => {
@@ -265,16 +294,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             fileProcessButton.disabled = true;
             clearFileButton.disabled = true;
-            downloadFileButton.disabled = true; // Keep disabled until success
+            downloadFileButton.disabled = true;
 
             const password = filePasswordInput.value;
             const isDecryptMode = fileModeToggle.checked;
 
             await processFileInChunks(selectedFile, password, isDecryptMode);
 
-            fileProcessButton.disabled = false; // Re-enable after process
+            fileProcessButton.disabled = false;
             clearFileButton.disabled = false;
-            // downloadFileButton is enabled by processFileInChunks on success
         });
     }
 
@@ -289,29 +317,23 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const isDecryptMode = fileModeToggle.checked;
                 let fileNameToDownload;
-                const newNCodeExtension = ".nCode"; // Changed from .ncde
+                const newNCodeExtension = ".nCode";
                 const nCodeEncryptedPrefix = "nCode_encrypted_";
 
                 if (isDecryptMode) {
-                    let name = originalFileName; // This is the name of the file selected for decryption.
-
-                    // Check if it matches the full "nCode_encrypted_... .nCode" pattern
+                    let name = originalFileName;
                     if (name.startsWith(nCodeEncryptedPrefix) && name.toLowerCase().endsWith(newNCodeExtension.toLowerCase())) {
                         name = name.substring(nCodeEncryptedPrefix.length, name.length - newNCodeExtension.length);
                     }
-                    // Else, check if it just ends with ".nCode" (e.g., user encrypted, renamed, then decrypts)
                     else if (name.toLowerCase().endsWith(newNCodeExtension.toLowerCase())) {
                         name = name.substring(0, name.length - newNCodeExtension.length);
                     }
-                    // Otherwise, the name is used as is (e.g., user is decrypting a file not ending in .nCode)
-
-                    if (!name) { // If stripping resulted in an empty name (e.g., original was ".nCode")
-                        name = "file"; // Default base name
+                    if (!name) {
+                        name = "file";
                     }
                     fileNameToDownload = "decrypted_" + name;
 
-                } else { // Encrypt mode
-                    // Replace spaces in originalFileName for a cleaner look, handle if originalFileName is empty
+                } else {
                     const baseName = originalFileName.replace(/[\s]/g, '_') || "file";
                     fileNameToDownload = nCodeEncryptedPrefix + baseName + newNCodeExtension;
                 }
@@ -336,11 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
         clearFileButton.addEventListener('click', () => {
             selectedFile = null;
             originalFileName = '';
-            if (fileInput) fileInput.value = ''; // Clear the file input selection
+            if (fileInput) fileInput.value = '';
             if (filePasswordInput) filePasswordInput.value = '';
             if (fileResultOutput) fileResultOutput.value = '';
+            if (fileGoldhashResultEl) fileGoldhashResultEl.textContent = ''; // Clear Goldhash
             updateProgress(0);
-            clearProcessedData(); // Clears parts, blob, and disables download button
+            clearProcessedData();
             console.log('File selection, fields, and processed data cleared.');
         });
     }

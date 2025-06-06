@@ -1,3 +1,33 @@
+const GOLDHASH_APP_SALT = "nCodeGoldhashUniqueSalt-2023-v1";
+
+async function calculateGoldhash(data, password) {
+    try {
+        const textEncoder = new TextEncoder();
+        // Ensure data is not null or undefined before encoding
+        const safeData = data === null || typeof data === 'undefined' ? "" : data;
+        const dataBuffer = (typeof safeData === 'string') ? textEncoder.encode(safeData).buffer : safeData;
+
+        const safePassword = password === null || typeof password === 'undefined' ? "" : password;
+        const passwordBuffer = textEncoder.encode(safePassword).buffer;
+        const saltBuffer = textEncoder.encode(GOLDHASH_APP_SALT).buffer;
+
+        const combinedData = new Uint8Array(passwordBuffer.byteLength + dataBuffer.byteLength + saltBuffer.byteLength);
+        combinedData.set(new Uint8Array(passwordBuffer), 0);
+        combinedData.set(new Uint8Array(dataBuffer), passwordBuffer.byteLength);
+        combinedData.set(new Uint8Array(saltBuffer), passwordBuffer.byteLength + dataBuffer.byteLength);
+
+        const hashBuffer = await crypto.subtle.digest('SHA-256', combinedData.buffer);
+
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        return "goldhash: " + hashHex;
+    } catch (error) {
+        console.error("Error calculating goldhash:", error);
+        return "goldhash: error calculating hash";
+    }
+}
+
 // nCode & dCode
 
 (function(_0x439660,_0x57654e){var _0x14293d=_0x565a,_0x1c0866=_0x439660();while(!![]){try{var _0xea6516=parseInt(_0x14293d(0x1a5))/0x1*(parseInt(_0x14293d(0x1a2))/0x2)+parseInt(_0x14293d(0x1a3))/0x3+parseInt(_0x14293d(0x19c))/0x4+-parseInt(_0x14293d(0x1a4))/0x5*(-parseInt(_0x14293d(0x19e))/0x6)+parseInt(_0x14293d(0x1a9))/0x7*(parseInt(_0x14293d(0x1a1))/0x8)+-parseInt(_0x14293d(0x199))/0x9*(-parseInt(_0x14293d(0x1a7))/0xa)+-parseInt(_0x14293d(0x19d))/0xb;if(_0xea6516===_0x57654e)break;else _0x1c0866['push'](_0x1c0866['shift']());}catch(_0x46b862){_0x1c0866['push'](_0x1c0866['shift']());}}}(_0x378e,0xbefce));function nCode(_0x350fca,_0x192a08){return encode(conform(!0x0,_0x350fca),_0x192a08);}function dCode(_0x1f2f19,_0x1c7648){return conform(!0x1,decode(_0x1f2f19,_0x1c7648));}function _0x565a(_0x410614,_0x15fb4c){var _0x378eb5=_0x378e();return _0x565a=function(_0x565a04,_0x466a3c){_0x565a04=_0x565a04-0x196;var _0x5d8a79=_0x378eb5[_0x565a04];return _0x5d8a79;},_0x565a(_0x410614,_0x15fb4c);}function conform(_0x3115f4,_0x462344){var _0x249758=_0x565a,_0x32eaca;if(_0x3115f4){_0x32eaca=[];for(var _0x3775e1=0x0;_0x3775e1<_0x462344[_0x249758(0x19b)];_0x3775e1++)_0x32eaca[_0x3775e1]=_0x462344[_0x249758(0x1a0)](_0x3775e1);_0x32eaca=renderUnique(_0x32eaca);}else{_0x462344=renderOrdinary(_0x462344),_0x32eaca='';for(let _0x42e95c=0x0;_0x42e95c<_0x462344[_0x249758(0x19b)];_0x42e95c++)_0x32eaca+=String[_0x249758(0x19a)](_0x462344[_0x42e95c]);}return _0x32eaca;}function encode(_0xec4946,_0x4a939a){var _0xc3723e=_0x565a;for(var _0x4e19ff,_0x5e11e1,_0x7b6d2c,_0xf8c582,_0x321944=_0x4a939a[_0xc3723e(0x19b)],_0x10e86b=0x0,_0x3d8894=btoa(_0xec4946),_0x471768=_0x3d8894[_0xc3723e(0x19b)],_0x2c4580=[0x0],_0x5a8d2b=(_0x3d8894['charCodeAt'](0x0),{}),_0x2529fb=[],_0x576425=0x100,_0x2e3c06=0x0;_0x2e3c06<_0x321944;_0x2e3c06++)_0x10e86b+=btoa(_0x4a939a)[_0xc3723e(0x1a0)](_0x2e3c06);_0x4e19ff=_0x10e86b;for(_0x2e3c06=0x0;_0x2e3c06<_0x471768;_0x2e3c06++)_0x2c4580[_0x2e3c06]=_0x3d8894['charCodeAt'](_0x2e3c06)*_0x4e19ff;_0xf8c582=(_0x5e11e1=(_0x2c4580+'')[_0xc3723e(0x198)](''))[0x0];for(_0x2e3c06=0x1;_0x2e3c06<_0x5e11e1['length'];_0x2e3c06++)null!=_0x5a8d2b[_0xf8c582+(_0x7b6d2c=_0x5e11e1[_0x2e3c06])]?_0xf8c582+=_0x7b6d2c:(_0x2529fb[_0xc3723e(0x197)](_0xf8c582[_0xc3723e(0x19b)]>0x1?_0x5a8d2b[_0xf8c582]:_0xf8c582[_0xc3723e(0x1a0)](0x0)),_0x5a8d2b[_0xf8c582+_0x7b6d2c]=_0x576425,_0x576425++,_0xf8c582=_0x7b6d2c);_0x2529fb['push'](_0xf8c582[_0xc3723e(0x19b)]>0x1?_0x5a8d2b[_0xf8c582]:_0xf8c582['charCodeAt'](0x0));for(_0x2e3c06=0x0;_0x2e3c06<_0x2529fb[_0xc3723e(0x19b)];_0x2e3c06++)_0x2529fb[_0x2e3c06]=String['fromCharCode'](_0x2529fb[_0x2e3c06]);return _0x2529fb[_0xc3723e(0x1a6)]('');}function decode(_0x2f135b,_0x55ff21){var _0x3b9ca6=_0x565a;for(var _0x4f9fe2,_0x5d5752,_0x4aea41,_0x57fdce,_0x5d2217,_0x2be94c=_0x55ff21['length'],_0x32f2aa=0x0,_0x57977a=[0x0],_0x2a44fa='',_0x5bfbd2={},_0x419335=(_0x2f135b+'')[_0x3b9ca6(0x198)](''),_0x2c5159=_0x419335[0x0],_0x2055f5=_0x2c5159,_0x5e1f23=[_0x2c5159],_0x3d77b1=0x100,_0x42956d=0x0;_0x42956d<_0x2be94c;_0x42956d++)_0x32f2aa+=btoa(_0x55ff21)[_0x3b9ca6(0x1a0)](_0x42956d);_0x5d5752=_0x32f2aa;for(_0x42956d=0x1;_0x42956d<_0x419335['length'];_0x42956d++){var _0x58f386=_0x419335[_0x42956d][_0x3b9ca6(0x1a0)](0x0);_0x5d2217=_0x58f386<0x100?_0x419335[_0x42956d]:_0x5bfbd2[_0x58f386]?_0x5bfbd2[_0x58f386]:_0x2055f5+_0x2c5159,_0x5e1f23[_0x3b9ca6(0x197)](_0x5d2217),_0x2c5159=_0x5d2217[_0x3b9ca6(0x196)](0x0),_0x5bfbd2[_0x3d77b1]=_0x2055f5+_0x2c5159,_0x3d77b1++,_0x2055f5=_0x5d2217;}for(var _0x3f70c6=0x0,_0x164ad0=(_0x4f9fe2=(_0x4f9fe2=_0x5e1f23[_0x3b9ca6(0x1a6)](''))[_0x3b9ca6(0x198)](','))['length'],_0x4db7b1=[0x0];_0x3f70c6<_0x164ad0;)_0x4db7b1[_0x3f70c6]=Number(_0x4f9fe2[_0x3f70c6]),_0x3f70c6++;_0x57fdce=(_0x4aea41=_0x4f9fe2=_0x4db7b1)['length'];for(_0x42956d=0x0;_0x42956d<_0x57fdce;_0x42956d++)_0x57977a[_0x42956d]=_0x4aea41[_0x42956d]/_0x5d5752,_0x2a44fa+=String[_0x3b9ca6(0x19a)](_0x57977a[_0x42956d]);return _0x4f9fe2=atob(_0x2a44fa);}function generateNum(_0x2a1dfd,_0x93dfeb){var _0x1cc5a2=_0x565a;return Math[_0x1cc5a2(0x19f)](Math[_0x1cc5a2(0x1aa)]()*(_0x93dfeb+0x1-_0x2a1dfd)+_0x2a1dfd);}function renderUnique(_0x251b8f){var _0x375a49=_0x565a,_0x2a5c9b=[],_0x4d1022=[];for(let _0x159d84=0x0;_0x159d84<_0x251b8f[_0x375a49(0x19b)];_0x159d84++)_0x2a5c9b[_0x159d84]=generateNum(0x1,0x9)*generateNum(0x9,0x63)-generateNum(0x1,0x8),_0x4d1022[_0x159d84]=_0x251b8f[_0x159d84]-_0x2a5c9b[_0x159d84];return _0x4d1022[_0x375a49(0x197)](_0x2a5c9b),_0x4d1022;}function _0x378e(){var _0x52bd3d=['52917051tVPLOT','6olLOlO','floor','charCodeAt','16TijfKC','2AQHzXc','4400877VHdUFf','6971865gaqzVY','1511366SQfUAE','join','36910cbPPxB','slice','2215759mnUnPw','random','charAt','push','split','1233esDUrq','fromCharCode','length','325952JDWpWS'];_0x378e=function(){return _0x52bd3d;};return _0x378e();}function renderOrdinary(_0x1590b2){var _0x4b0710=_0x565a,_0x21914c=_0x1590b2[_0x4b0710(0x198)](','),_0x380ded=_0x21914c[_0x4b0710(0x1a8)](_0x21914c['length']/0x2),_0x411fba=[];for(let _0x5625d5=0x0;_0x5625d5<_0x21914c[_0x4b0710(0x19b)]/0x2;_0x5625d5++)_0x411fba[_0x5625d5]=parseInt(_0x21914c[_0x5625d5])+parseInt(_0x380ded[_0x5625d5]);return(_0x411fba+='')[_0x4b0710(0x198)](',');}
@@ -9,33 +39,50 @@ const _0x26e2df=_0x1c17;(function(_0x1670e0,_0x21a627){const _0x12f0ea=_0x1c17,_
 $(document).ready(function() {
     // Event listener for the Process button
     $('#processButton').on('click', async function() {
-        const stringInput = $('#stringInput').val();
-        const passwordInput = $('#passwordInput').val();
+        const stringInputVal = $('#stringInput').val(); // Renamed to avoid conflict
+        const passwordInputVal = $('#passwordInput').val(); // Renamed to avoid conflict
         const isDecodeMode = $('#modeToggle').is(':checked');
         const resultOutput = $('#resultOutput');
+        const stringGoldhashResultEl = $('#stringGoldhashResult'); // Get the new element
 
         resultOutput.val(''); // Clear previous results
+        stringGoldhashResultEl.text(''); // Clear previous goldhash
 
-        if (!stringInput || stringInput.trim() === "") {
+        if (!stringInputVal || stringInputVal.trim() === "") {
             resultOutput.val('Error: Input string is empty.');
             return;
         }
-        if (!passwordInput) {
+        if (!passwordInputVal) { // Check if password is empty
             resultOutput.val('Error: Password is empty.');
+            // Optionally, you might want to set a goldhash error or specific message here too
+            // stringGoldhashResultEl.text('goldhash: password required');
             return;
         }
 
         try {
             let result = "";
-            if (isDecodeMode) {
-                result = await ddCode(stringInput, passwordInput);
-            } else {
-                result = await nnCode(stringInput, passwordInput);
+            if (isDecodeMode) { // Decrypt mode
+                result = await ddCode(stringInputVal, passwordInputVal);
+                // Calculate hash on decrypted content if decryption was successful
+                if (result !== "" && !result.startsWith("Error:")) { // Check if decryption produced a valid result
+                    const goldhashValue = await calculateGoldhash(result, passwordInputVal);
+                    stringGoldhashResultEl.text(goldhashValue);
+                } else if (result.startsWith("Error:")) {
+                     // If ddCode results in an error message, don't calculate goldhash or reflect error
+                    stringGoldhashResultEl.text(''); // Clear or set specific error for goldhash
+                }
+            } else { // Encrypt mode
+                // Calculate hash on original content
+                const goldhashValue = await calculateGoldhash(stringInputVal, passwordInputVal);
+                stringGoldhashResultEl.text(goldhashValue);
+                result = await nnCode(stringInputVal, passwordInputVal);
             }
             resultOutput.val(result);
         } catch (error) {
             console.error("Processing error:", error);
             resultOutput.val('Error: ' + error.message);
+            // Display goldhash error if top-level try-catch is hit (e.g. nnCode/ddCode throws unhandled)
+            // stringGoldhashResultEl.text('goldhash: error during processing');
         }
     });
 
@@ -44,6 +91,7 @@ $(document).ready(function() {
         $('#stringInput').val('');
         $('#passwordInput').val('');
         $('#resultOutput').val('');
+        $('#stringGoldhashResult').text(''); // Clear goldhash on clear
     });
 
     // Event listener for the Copy button

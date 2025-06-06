@@ -22,13 +22,6 @@
     >
       <div>
         <div class="flex items-center bg-[#131811] p-4 pb-2 justify-between">
-          <div class="text-white flex size-12 shrink-0 items-center" data-icon="List" data-size="24px" data-weight="regular">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-              <path
-                d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"
-              ></path>
-            </svg>
-          </div>
           <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">nCode</h2>
           <div class="flex w-12 items-center justify-end">
             <button
@@ -121,6 +114,7 @@
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <input
+                    id="managerPassword"
                     placeholder="Manager Password"
                     class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] h-14 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
                     value=""
@@ -128,16 +122,16 @@
                 </label>
               </div>
               <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Sites</h3>
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+              <div id="sitesContainer" class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <input
                     placeholder="Site 1"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] h-14 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
+                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] h-14 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal site-input"
                     value=""
                   />
                 </label>
               </div>
-              <div class="flex items-center gap-4 bg-[#141613] px-4 min-h-14">
+              <div id="addSiteButton" class="flex items-center gap-4 bg-[#141613] px-4 min-h-14">
                 <div class="text-white flex items-center justify-center rounded-lg bg-[#2f342d] shrink-0 size-10" data-icon="Plus" data-size="24px" data-weight="regular">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
                     <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
@@ -147,6 +141,7 @@
               </div>
               <div class="flex px-4 py-3 justify-end">
                 <button
+                  id="processPasswordsButton"
                   class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
                 >
                   <span class="truncate">Process</span>
@@ -155,6 +150,7 @@
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                   <textarea
+                    id="passwordResultOutput"
                     placeholder="Result"
                     class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
                   ></textarea>
@@ -264,5 +260,6 @@
       });
     </script>
     <script src="goldhash.js"></script>
+    <script src="password-manager.js"></script>
   </body>
 </html>

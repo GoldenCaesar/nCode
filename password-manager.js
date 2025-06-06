@@ -8,14 +8,55 @@ $(document).ready(function() {
 
     try {
       const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-      return hashHex.substring(0, 16); // Truncate to 16 characters
+      const hashArray = Array.from(new Uint8Array(hashBuffer)); // 32 bytes
+
+      const lower = 'abcdefghijklmnopqrstuvwxyz';
+      const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>/?';
+
+      const allChars = lower + upper + numbers + symbols;
+
+      let password_chars = [];
+
+      if (hashArray.length >= 4) {
+          password_chars.push(lower[hashArray[0] % lower.length]);
+          password_chars.push(upper[hashArray[1] % upper.length]);
+          password_chars.push(numbers[hashArray[2] % numbers.length]);
+          password_chars.push(symbols[hashArray[3] % symbols.length]);
+      } else {
+          password_chars.push(lower[0]);
+          password_chars.push(upper[0]);
+          password_chars.push(numbers[0]);
+          password_chars.push(symbols[0]);
+      }
+
+      let fillHashIndex = 4; // Start from the 5th byte of the hash (index 4)
+      while (password_chars.length < 16) {
+          if (fillHashIndex >= hashArray.length) {
+              fillHashIndex = 0;
+          }
+          password_chars.push(allChars[hashArray[fillHashIndex] % allChars.length]);
+          fillHashIndex++;
+      }
+
+      let shuffleRandIndex = Math.floor(hashArray.length / 2);
+      for (let i = password_chars.length - 1; i > 0; i--) {
+          if (shuffleRandIndex >= hashArray.length) {
+              shuffleRandIndex = 0;
+          }
+          const randByteForShuffle = hashArray[shuffleRandIndex];
+          shuffleRandIndex++;
+
+          const j = randByteForShuffle % (i + 1);
+          [password_chars[i], password_chars[j]] = [password_chars[j], password_chars[i]];
+      }
+
+      return password_chars.join('');
+
     } catch (error) {
-      console.error('Error generating password:', error);
-      // Fallback or error indication if crypto fails
-      // For now, returning a fixed string, but this should be handled more gracefully
-      return "ErrorInCryptoGen";
+      console.error('Error generating password (v2):', error);
+      return "ErrCryptoV2!#%16";
     }
   }
 

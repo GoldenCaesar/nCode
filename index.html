@@ -75,6 +75,13 @@
               />
             </label>
           </div>
+          <div class="flex px-4 py-3 justify-end">
+            <button
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
+            >
+              <span class="truncate">Process</span>
+            </button>
+          </div>
           <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
             <label class="flex flex-col min-w-40 flex-1">
               <textarea
@@ -82,13 +89,6 @@
                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
               ></textarea>
             </label>
-          </div>
-          <div class="flex px-4 py-3 justify-end">
-            <button
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
-            >
-              <span class="truncate">Process</span>
-            </button>
           </div>
         </div>
         <div id="passwordManagerContent" style="display:none;">
@@ -122,9 +122,9 @@
             </div>
             <p class="text-white text-base font-normal leading-normal flex-1 truncate">Add Site</p>
           </div>
-          <div class="flex px-4 py-3">
+          <div class="flex px-4 py-3 justify-end">
             <button
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 flex-1 bg-[#e2efdb] text-[#141613] text-sm font-bold leading-normal tracking-[0.015em]"
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
             >
               <span class="truncate">Process</span>
             </button>
@@ -133,7 +133,7 @@
             <label class="flex flex-col min-w-40 flex-1">
               <textarea
                 placeholder="Result"
-                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#464d42] bg-[#20241e] focus:border-[#464d42] min-h-36 placeholder:text-[#a9b2a4] p-[15px] text-base font-normal leading-normal"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
               ></textarea>
             </label>
           </div>
@@ -156,9 +156,9 @@
               />
             </label>
           </div>
-          <div class="flex px-4 py-3">
+          <div class="flex px-4 py-3 justify-end">
             <button
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 flex-1 bg-[#46b809] text-[#131811] text-base font-bold leading-normal tracking-[0.015em]"
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
             >
               <span class="truncate">Process</span>
             </button>
@@ -168,7 +168,7 @@
               <p class="text-white text-base font-medium leading-normal pb-2">Result</p>
               <textarea
                 placeholder="Result"
-                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#44543b] bg-[#1f271b] focus:border-[#44543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"
               ></textarea>
             </label>
           </div>
@@ -197,19 +197,25 @@
         }
 
         // Update navigation link styles
-        const navLinks = document.querySelectorAll('.flex.border-b.border-[#43543b].px-4.gap-8 > a');
-        navLinks.forEach(link => {
-          link.classList.remove('border-b-white', 'text-white');
-          link.classList.add('border-b-transparent', 'text-[#a6ba9c]');
-          // Also update the child <p> tag's text color
-          const pTag = link.querySelector('p');
-          if (pTag) {
-            pTag.classList.remove('text-white');
-            pTag.classList.add('text-[#a6ba9c]');
+        const allNavLinks = clickedLink.parentNode.querySelectorAll('a'); // Get all sibling 'a' tags
+
+        allNavLinks.forEach(link => {
+          if (link !== clickedLink) {
+            // If this link is not the clicked link, ensure it's set to inactive
+            if (link.classList.contains('border-b-white') || link.classList.contains('text-white')) {
+              link.classList.remove('border-b-white', 'text-white');
+              link.classList.add('border-b-transparent', 'text-[#a6ba9c]');
+              const pTag = link.querySelector('p');
+              if (pTag) {
+                pTag.classList.remove('text-white');
+                pTag.classList.add('text-[#a6ba9c]');
+              }
+            }
           }
         });
 
         // Apply active style to the clicked link
+        // Ensure inactive styles are removed and active styles are added
         clickedLink.classList.remove('border-b-transparent', 'text-[#a6ba9c]');
         clickedLink.classList.add('border-b-white', 'text-white');
         const clickedPTag = clickedLink.querySelector('p');
@@ -219,17 +225,17 @@
         }
       }
 
-      // Initially, ensure the correct content section is displayed based on the default active link
-      // The "String Encryption" link is active by default.
+      // Initially, the "String Encryption" tab is active by default as set in HTML.
+      // The HTML correctly reflects the active state for the "String Encryption" tab:
+      // <a> has border-b-white, text-white
+      // <p> has text-white
+      // Other tabs correctly have border-b-transparent, text-[#a6ba9c]
+      // No specific JavaScript action is required on DOMContentLoaded to set this initial state
+      // as the static HTML already defines it.
       document.addEventListener('DOMContentLoaded', function() {
-        // No need to explicitly call showContent here if stringEncryptionContent is visible by default
-        // and others are hidden by default, and the classes are already set in HTML for the default state.
-        // However, if we want to be very explicit or if default HTML state might not be guaranteed:
-        const initialActiveLink = document.querySelector('.flex.border-b.border-[#43543b].px-4.gap-8 > a.border-b-white');
-        if (initialActiveLink) {
-          // The stringEncryptionContent is already visible by default due to not having display:none
-          // This part is mostly to ensure the function is robust if we decide to hide all by default later.
-        }
+        // The "String Encryption" content is visible by default.
+        // The corresponding link is styled as active in the HTML.
+        // No dynamic changes needed here for initial setup if HTML is correct.
       });
     </script>
   </body>

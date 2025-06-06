@@ -54,5 +54,13 @@ If the Goldhashes match, you can be confident that the content is identical and 
 
 Since all operations are client-side, you can download the nCode application (the HTML file and associated `scripts` and `assets` folders) and run it from your local computer without an internet connection.
 
+## Important Note on Versioning
+
+Please be aware that nCode is an evolving project. Future updates, especially those involving changes to the underlying encryption or decryption algorithms (indicated by a change in the version number visible in the site footer), may result in incompatibility with data encrypted with older versions.
+
+**This means that text, files, or passwords encrypted with one version of nCode may not be decryptable or recoverable with a different version if the core algorithms have changed.**
+
+It is crucial to keep a record of the version of nCode used for any specific encryption task if you anticipate needing to decrypt it in the distant future. While we strive for backward compatibility where possible, it cannot be guaranteed across major algorithm changes.
+
 ---
 Feel free to contribute or report issues!

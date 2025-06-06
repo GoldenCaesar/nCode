@@ -10,7 +10,7 @@
 
     <title>nCode</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <link rel="icon" type="image/png" href="assets/demicube.png" />
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -22,7 +22,9 @@
     >
       <div>
         <div class="flex items-center bg-[#131811] p-4 pb-2 justify-between">
-          <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">nCode</h2>
+          <div style="text-align: center;" class="flex-1">
+            <img src="assets/demicube.png" />
+          </div>
           <div class="flex w-12 items-center justify-end">
             <button
               class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0"
@@ -141,7 +143,7 @@
                 </div>
                 <p class="text-white text-base font-normal leading-normal flex-1 truncate">Add Site</p>
               </div>
-              <div class="flex px-4 py-3 justify-end">
+              <div class="flex px-4 py-3">
                 <button
                   id="processPasswordsButton"
                   class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
@@ -177,7 +179,7 @@
                   />
                 </label>
               </div>
-              <div class="flex px-4 py-3 justify-end">
+              <div class="flex px-4 py-3">
                 <button
                   class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"
                 >
@@ -261,7 +263,8 @@
         // No dynamic changes needed here for initial setup if HTML is correct.
       });
     </script>
-    <script src="goldhash.js"></script>
-    <script src="password-manager.js"></script>
+    <script src="scripts/goldhash.js"></script>
+    <script src="scripts/password-manager.js"></script>
+    <script src="scripts/file-encryption.js"></script>
   </body>
 </html>

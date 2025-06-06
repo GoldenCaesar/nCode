@@ -166,6 +166,12 @@
                 >
                   <span class="truncate">Process</span>
                 </button>
+                <button
+                  id="clearPasswordsButton"
+                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#f0ad4e] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] ml-2"
+                >
+                  <span class="truncate">Clear</span>
+                </button>
               </div>
               <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
@@ -245,13 +251,6 @@
           </div>
         </div>
       </div>
-      <div class="bg-[#131811] text-center p-4 mt-8">
-        <p class="text-sm text-[#a6ba9c]">
-          &copy; <span id="currentYear"></span> Demicube |
-          <a href="privacy-policy.html" class="hover:text-white">Privacy Policy</a> |
-          Version: v3.2
-        </p>
-      </div>
       <div><div class="h-5 bg-[#131811]"></div></div>
     </div>
     <script>
@@ -259,7 +258,7 @@
         // Get all content sections
         const stringEncryptionContent = document.getElementById('stringEncryptionContent');
         const passwordManagerContent = document.getElementById('passwordManagerContent');
-        const fileEncryptionContent = document.getElementById('fileEncryptionContent');
+        const fileEncryptionContent =.getElementById('fileEncryptionContent');
 
         // Hide all content sections
         if (stringEncryptionContent) stringEncryptionContent.style.display = 'none';
@@ -350,9 +349,6 @@
             });
         });
     });
-    </script>
-    <script>
-      document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
   </body>
 </html>

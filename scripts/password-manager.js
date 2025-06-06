@@ -113,4 +113,30 @@ $(document).ready(function() {
 
     $('#passwordResultOutput').val(results.trim());
   });
+
+  $('#clearPasswordsButton').on('click', function() {
+    // Clear Manager Password
+    $('#managerPassword').val('');
+
+    // Clear Result Output
+    $('#passwordResultOutput').val('');
+
+    // Handle Site Inputs
+    const sitesContainer = $('#sitesContainer');
+    const siteInputWrappers = sitesContainer.children('div.flex.max-w-\[480px\].flex-wrap.items-end.gap-4.px-4.py-3');
+
+    // Clear the first site input
+    if (siteInputWrappers.length > 0) {
+      $(siteInputWrappers[0]).find('.site-input').val('');
+    }
+
+    // Remove additional site inputs (all except the first one)
+    siteInputWrappers.slice(1).remove();
+
+    // Reset siteCounter
+    siteCounter = 1;
+    // Update placeholder of the first site input if necessary, though it's static in HTML
+    // If the placeholder was dynamic like "Site ${siteCounter}", you'd update it here.
+    // For this specific HTML, "Site 1" is hardcoded for the first input.
+  });
 });

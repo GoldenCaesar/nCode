@@ -78,7 +78,7 @@ async function goldHash() {
 
 
 
-//$(function() {
+/*$(function() {
   // document.getElementById("encodeButton").addEventListener("click", function() {
   //   goldHash(false);
   // });
@@ -152,7 +152,7 @@ setTimeout(function(){
 $("html, body").animate({ scrollTop: $(document).height() }, "slow"); // This might be for a specific page structure
 	}, 1000);
 });
-
+*/
 
 if (document.getElementById("processButton")) {
     document.getElementById("processButton").addEventListener("click", function() {

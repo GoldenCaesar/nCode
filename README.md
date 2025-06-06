@@ -1,6 +1,6 @@
 # nCode - Secure Client-Side Encryption Tool
 
-Developed by Jules.
+Developed by GoldenCaesar with help from Jules. Thanks Jules.
 
 ## Overview
 

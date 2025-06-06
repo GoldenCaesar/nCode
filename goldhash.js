@@ -78,7 +78,7 @@ async function goldHash() {
 
 
 
-$(function() {
+//$(function() {
   // document.getElementById("encodeButton").addEventListener("click", function() {
   //   goldHash(false);
   // });

@@ -14,6 +14,25 @@
       #helpButtonStringEncryption, #helpButtonPasswordManager, #helpButtonFileEncryption {
         padding: 0.5em;
       }
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; /* Align toasts to the right */
+      }
+      .toast-message {
+        background-color: #333; /* Dark background */
+        color: #fff; /* White text */
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        opacity: 0.9;
+        transition: opacity 0.5s ease-out;
+      }
     </style>
     <title>nCode</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -269,20 +288,22 @@
               <div id="key-pair-management-section" class="border-t border-[#43543b] mt-4 pt-4">
                 <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">Your Key Pair Management</h3>
 
-                <!-- This h3 replaces the generate-key-pair-button -->
-                <h3 class="text-white text-md font-bold leading-tight tracking-[-0.015em] px-4 py-3">Generate New Key Pair</h3>
+                <div id="key-generation-group-container">
+                  <!-- This h3 replaces the generate-key-pair-button -->
+                  <h3 class="text-white text-md font-bold leading-tight tracking-[-0.015em] px-4 py-3">Generate New Key Pair</h3>
 
-                <div id="new-key-generation-elements">
-                  <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                    <label class="flex flex-col min-w-40 flex-1">
-                      <input type="password" id="keyGenPassphraseInput" placeholder="Passphrase for Key Protection (Optional)" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
-                    </label>
-                  </div>
+                  <div id="new-key-generation-elements">
+                    <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                      <label class="flex flex-col min-w-40 flex-1">
+                        <input type="password" id="keyGenPassphraseInput" placeholder="Passphrase for Key Protection (Optional)" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
+                      </label>
+                    </div>
 
-                  <div class="flex px-4 py-3 gap-2">
-                    <button id="generateAndDownloadKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
-                      <span class="truncate">Generate & Encrypt Keys</span>
-                    </button>
+                    <div class="flex px-4 py-3 gap-2">
+                      <button id="generateAndDownloadKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                        <span class="truncate">Generate & Encrypt Keys</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -389,7 +410,7 @@
                   <!-- Added dcodeStringOutput and dcodeFilesOutput -->
                   <textarea id="dcodeStringOutput" readonly placeholder="Decrypted string content will appear here..." class="form-input mb-3 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-24 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal" style="overflow: auto"></textarea>
                   <div id="dcodeFilesOutput" placeholder="Download links for decrypted files will appear here..."></div>
-                  <p class="text-white text-base font-normal leading-normal">Awaiting decryption...</p> <!-- This can be removed or hidden by JS later -->
+                  <p id="awaiting-decryption-message" class="text-white text-base font-normal leading-normal">Awaiting decryption...</p> <!-- This can be removed or hidden by JS later -->
                 </div>
               </div>
               <!-- End of DCode Workflow Section -->
@@ -460,6 +481,7 @@
     <script src="scripts/password-manager.js"></script>
     <script src="scripts/file-encryption.js"></script>
     <script src="scripts/transmission.js"></script>
+    <div id="toast-container"></div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Helper function to toggle visibility

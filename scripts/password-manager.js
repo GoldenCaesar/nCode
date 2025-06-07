@@ -63,7 +63,7 @@ $(document).ready(function() {
   $('#addSiteButton').on('click', function() {
     siteCounter++;
     const newSiteInputHtml = `
-      <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+      <div class="site-input-wrapper flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
         <label class="flex flex-col min-w-40 flex-1">
           <input
             placeholder="Site ${siteCounter}"
@@ -140,13 +140,10 @@ $(document).ready(function() {
     //   <!-- Dynamically added sites follow the same wrapper structure -->
     // </div>
     // So, we target these direct child divs for removal.
-    const siteInputWrappers = sitesContainer.children('div.flex.max-w-\[480px\].flex-wrap.items-end.gap-4.px-4.py-3');
+    const siteInputWrappers = sitesContainer.children('.site-input-wrapper');
 
-    // Remove additional site input wrappers (all except the first one)
-    // The first one is cleared by the siteInputs.each() loop above and should not be removed.
-    if (siteInputWrappers.length > 1) {
-      siteInputWrappers.slice(1).remove();
-    }
+    // Remove all dynamically added site input wrappers.
+    siteInputWrappers.remove();
 
     // Reset siteCounter
     siteCounter = 1;

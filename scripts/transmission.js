@@ -1,6 +1,32 @@
 let currentKeyPair = null;
 let uploadedKeyFileData = null;
 
+function showToast(message, duration = 5000) {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        console.error('Toast container not found!');
+        // Fallback to alert if container is missing, though it shouldn't be
+        alert(message);
+        return;
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-message'; // Apply CSS class
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // Automatically remove the toast after 'duration'
+    setTimeout(() => {
+        toast.style.opacity = '0'; // Start fade out
+        setTimeout(() => { // Wait for fade out to complete
+            if (toast.parentNode === container) { // Check if still child before removing
+                container.removeChild(toast);
+            }
+        }, 500); // Match opacity transition time
+    }, duration);
+}
+
 // Helper function to convert ArrayBuffer to Base64
 function arrayBufferToBase64(buffer) {
     let binary = '';
@@ -40,13 +66,13 @@ async function generateAndEncryptKeys() {
     const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
 
     if (!keyGenPassphraseInput || !publicKeyDisplayArea || !copyPublicKeyButton) {
-        alert("Required UI elements for key generation are missing. Please check the page structure.");
+        showToast("Required UI elements for key generation are missing. Please check the page structure.");
         return;
     }
 
     const passphrase = keyGenPassphraseInput.value;
     if (!passphrase) {
-        alert("Please enter a passphrase to encrypt the keys.");
+        showToast("Please enter a passphrase to encrypt the keys.");
         return;
     }
 
@@ -127,11 +153,11 @@ async function generateAndEncryptKeys() {
         // Clear Passphrase
         keyGenPassphraseInput.value = "";
 
-        alert("Keys generated, encrypted, and download initiated!");
+        showToast("Keys generated, encrypted, and download initiated!");
 
     } catch (error) {
         console.error("Key generation/encryption failed:", error);
-        alert("Error generating keys. Check console for details. Ensure you are using a secure context (HTTPS or localhost).");
+        showToast("Error generating keys. Check console for details. Ensure you are using a secure context (HTTPS or localhost).");
     }
 }
 
@@ -149,18 +175,21 @@ function readFileAsText(file) {
 async function decryptTransmission(event) {
     const dcodeStringOutput = document.getElementById('dcodeStringOutput');
     const dcodeFilesOutput = document.getElementById('dcodeFilesOutput');
+    const awaitingMessage = document.getElementById('awaiting-decryption-message');
 
-    if (!dcodeStringOutput || !dcodeFilesOutput) {
-        alert("Required UI elements for decryption output are missing. Please check the page structure.");
+    // Clear previous results and show awaiting message
+    if (dcodeStringOutput) dcodeStringOutput.value = '';
+    if (dcodeFilesOutput) dcodeFilesOutput.innerHTML = '';
+    if (awaitingMessage) awaitingMessage.style.display = 'block'; // Or 'inline' or other default
+
+    if (!dcodeStringOutput || !dcodeFilesOutput) { // awaitingMessage can be optional
+        showToast("Required UI elements for decryption output are missing. Please check the page structure.");
+        if (awaitingMessage) awaitingMessage.style.display = 'none'; // Hide if critical elements missing
         return;
     }
 
-    // Clear previous results
-    dcodeStringOutput.value = '';
-    dcodeFilesOutput.innerHTML = '';
-
     if (!currentKeyPair || !currentKeyPair.privateKey) {
-        alert("Please load your encrypted key pair first. The private key is needed for decryption.");
+        showToast("Please load your encrypted key pair first. The private key is needed for decryption.");
         if(event && event.target) event.target.value = null; // Clear file input
         return;
     }
@@ -173,13 +202,13 @@ async function decryptTransmission(event) {
     }
 
     if (!file.name.endsWith('.nCodeTransmission')) {
-        alert("Invalid file type. Please select a '.nCodeTransmission' file.");
+        showToast("Invalid file type. Please select a '.nCodeTransmission' file.");
         event.target.value = null; // Clear the file input
         return;
     }
 
     if (typeof JSZip === 'undefined') {
-        alert("JSZip library is not loaded. Decryption cannot proceed.");
+        showToast("JSZip library is not loaded. Decryption cannot proceed.");
         console.error("JSZip is not defined. Please ensure the library is included in your HTML.");
         event.target.value = null;
         return;
@@ -191,7 +220,7 @@ async function decryptTransmission(event) {
         try {
             transmissionJson = JSON.parse(fileContent);
         } catch (e) {
-            alert("Invalid transmission file format (not valid JSON).");
+            showToast("Invalid transmission file format (not valid JSON).");
             console.error("JSON Parsing Error:", e);
             event.target.value = null;
             return;
@@ -206,12 +235,12 @@ async function decryptTransmission(event) {
         } = transmissionJson;
 
         if (!b64EncryptedData || !b64EncryptedSessionKey || !b64Iv || !sessionKeyParams) {
-            alert("Invalid transmission file content: missing required encrypted data, session key, IV, or session key parameters.");
+            showToast("Invalid transmission file content: missing required encrypted data, session key, IV, or session key parameters.");
             event.target.value = null;
             return;
         }
         if (transmissionVersion !== "1.0") {
-            alert(`Unsupported transmission version: ${transmissionVersion}. Expected "1.0".`);
+            showToast(`Unsupported transmission version: ${transmissionVersion}. Expected "1.0".`);
             event.target.value = null;
             return;
         }
@@ -279,26 +308,32 @@ async function decryptTransmission(event) {
                 link.href = URL.createObjectURL(fileBlob);
                 link.textContent = `Download ${zipEntry.name}`;
                 link.download = zipEntry.name;
-                link.style.display = "block"; // Make each link a block element for better spacing
+                // Apply new styling for links
+                link.className = "inline-block bg-[#5bc0de] text-[#131811] px-3 py-2 rounded text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#46b8da] focus:outline-none focus:ring-2 focus:ring-[#5bc0de] focus:ring-opacity-50 cursor-pointer no-underline";
+                link.style.marginRight = "5px";
                 link.style.marginBottom = "5px";
                 dcodeFilesOutput.appendChild(link);
             }
         }
 
+        if (awaitingMessage) awaitingMessage.style.display = 'none'; // Hide after processing files
+
         if (fileCount === 0 && !foundStringContent) {
              dcodeStringOutput.value = "(No text content or files found in the decrypted transmission)";
-        } else if (fileCount > 0) { // Offer download all if there were any files (even if string_content.txt was also there)
+             if (awaitingMessage) awaitingMessage.style.display = 'block'; // Show if nothing found
+        } else if (fileCount > 0) {
             const downloadAllButton = document.createElement("button");
             downloadAllButton.textContent = "Download All Decrypted Files as .zip";
+            // Apply new styling for the button
+            downloadAllButton.className = "inline-block bg-[#47c10a] text-[#131811] px-3 py-2 rounded text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#3aa107] focus:outline-none focus:ring-2 focus:ring-[#47c10a] focus:ring-opacity-50 cursor-pointer";
             downloadAllButton.style.marginTop = "10px";
             downloadAllButton.onclick = () => {
-                // We already have the decryptedZipData, which is the zip itself
                 downloadFile(new Blob([decryptedZipData]), "decrypted_files.zip", "application/zip");
             };
             dcodeFilesOutput.appendChild(downloadAllButton);
         }
 
-        alert("Decryption successful!");
+        showToast("Decryption successful!");
         if(event && event.target) event.target.value = null; // Clear file input
 
     } catch (error) {
@@ -310,9 +345,12 @@ async function decryptTransmission(event) {
             userMessage = error.message; // More specific error from our checks
         }
 
-        alert(userMessage);
-        dcodeStringOutput.value = ''; // Clear output on error
-        dcodeFilesOutput.innerHTML = ''; // Clear output on error
+        showToast(userMessage);
+        // Clear outputs and show awaiting message on error
+        if (dcodeStringOutput) dcodeStringOutput.value = '';
+        if (dcodeFilesOutput) dcodeFilesOutput.innerHTML = '';
+        if (awaitingMessage) awaitingMessage.style.display = 'block'; // Or 'inline'
+
         if(event && event.target) event.target.value = null; // Clear file input
     }
 }
@@ -324,7 +362,7 @@ async function encryptTransmission() {
     const ncodeFileInput = document.getElementById('ncodeFileInput');
 
     if (!recipientPublicKeyInput || !ncodeStringInput || !ncodeFileInput) {
-        alert("One or more UI elements for encryption are missing. Please check the page setup.");
+        showToast("One or more UI elements for encryption are missing. Please check the page setup.");
         return;
     }
 
@@ -333,18 +371,18 @@ async function encryptTransmission() {
     const fileToEncrypt = ncodeFileInput.files[0];
 
     if (!recipientPublicKeyJwkString) {
-        alert("Recipient's public key is required to encrypt the transmission.");
+        showToast("Recipient's public key is required to encrypt the transmission.");
         return;
     }
 
     if (!stringToEncrypt && !fileToEncrypt) {
-        alert("Please provide either a string or select a file to encrypt.");
+        showToast("Please provide either a string or select a file to encrypt.");
         return;
     }
 
     // Check if JSZip is available
     if (typeof JSZip === 'undefined') {
-        alert("JSZip library is not loaded. Encryption cannot proceed.");
+        showToast("JSZip library is not loaded. Encryption cannot proceed.");
         console.error("JSZip is not defined. Please ensure the library is included in your HTML.");
         return;
     }
@@ -366,7 +404,7 @@ async function encryptTransmission() {
                 ["encrypt"]
             );
         } catch (e) {
-            alert("Invalid recipient public key format or content. Please ensure it's a valid JWK. Error: " + e.message);
+            showToast("Invalid recipient public key format or content. Please ensure it's a valid JWK. Error: " + e.message);
             console.error("Recipient Public Key Import Error:", e);
             return;
         }
@@ -448,7 +486,7 @@ async function encryptTransmission() {
 
         downloadFile(JSON.stringify(transmissionJson, null, 2), "encrypted_transmission.nCodeTransmission", "application/json");
 
-        alert("Transmission encrypted and download initiated!");
+        showToast("Transmission encrypted and download initiated!");
         if (ncodeStringInput) ncodeStringInput.value = '';
         if (ncodeFileInput) ncodeFileInput.value = null;
         // Consider not clearing recipientPublicKeyInput if user wants to send multiple files to same recipient
@@ -456,7 +494,7 @@ async function encryptTransmission() {
 
     } catch (error) {
         console.error("Encryption failed:", error);
-        alert(`Encryption failed: ${error.message}. Check console for details.`);
+        showToast(`Encryption failed: ${error.message}. Check console for details.`);
     }
 }
 
@@ -468,7 +506,7 @@ function handleUploadEncryptedKeys(event) {
     }
 
     if (!file.name.endsWith('.nCodeKeys')) {
-        alert("Please select a valid '.nCodeKeys' file.");
+        showToast("Please select a valid '.nCodeKeys' file.");
         event.target.value = null; // Clear the file input
         uploadedKeyFileData = null;
         return;
@@ -485,18 +523,18 @@ function handleUploadEncryptedKeys(event) {
             if (!uploadedKeyFileData || typeof uploadedKeyFileData.encryptedPrivateKey !== 'string' ||
                 typeof uploadedKeyFileData.publicKey !== 'object' || typeof uploadedKeyFileData.salt !== 'string' ||
                 typeof uploadedKeyFileData.iv !== 'string' || typeof uploadedKeyFileData.kdfIterations !== 'number') {
-                alert("The key file is not in the expected format or is missing required fields.");
+                showToast("The key file is not in the expected format or is missing required fields.");
                 uploadedKeyFileData = null;
                 event.target.value = null; // Clear the file input
                 return;
             }
 
-            alert("Encrypted key file loaded. Please enter your passphrase and click 'Load & Decrypt Keys'.");
+            showToast("Encrypted key file loaded. Please enter your passphrase and click 'Load & Decrypt Keys'.");
             // Optionally, enable the 'Load & Decrypt Keys' button here if it was disabled
             // document.getElementById('decrypt-and-load-keys-button').disabled = false;
         } catch (error) {
             console.error("Error parsing key file:", error);
-            alert("Failed to parse the key file. It might be corrupted or not a valid JSON format.");
+            showToast("Failed to parse the key file. It might be corrupted or not a valid JSON format.");
             uploadedKeyFileData = null;
             event.target.value = null; // Clear the file input
         }
@@ -504,7 +542,7 @@ function handleUploadEncryptedKeys(event) {
 
     reader.onerror = function() {
         console.error("Error reading file:", reader.error);
-        alert("An error occurred while reading the file.");
+        showToast("An error occurred while reading the file.");
         uploadedKeyFileData = null;
         event.target.value = null; // Clear the file input
     };
@@ -518,18 +556,18 @@ async function loadEncryptedKeys() {
     const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
 
     if (!keyLoadPassphraseInput || !publicKeyDisplayArea || !copyPublicKeyButton) {
-        alert("Required UI elements for key loading are missing.");
+        showToast("Required UI elements for key loading are missing.");
         return;
     }
 
     const passphrase = keyLoadPassphraseInput.value;
     if (!passphrase) {
-        alert("Please enter a passphrase to decrypt the keys.");
+        showToast("Please enter a passphrase to decrypt the keys.");
         return;
     }
 
     if (!uploadedKeyFileData) {
-        alert("No key file loaded. Please upload a '.nCodeKeys' file first using the 'Upload Encrypted Key Pair' button.");
+        showToast("No key file loaded. Please upload a '.nCodeKeys' file first using the 'Upload Encrypted Key Pair' button.");
         return;
     }
 
@@ -622,17 +660,17 @@ async function loadEncryptedKeys() {
         copyPublicKeyButton.disabled = false;
         keyLoadPassphraseInput.value = ""; // Clear passphrase
 
-        alert("Keys successfully loaded and decrypted!");
+        showToast("Keys successfully loaded and decrypted!");
 
     } catch (error) {
         console.error("Key loading/decryption failed:", error);
         if (error.message.includes("Failed to decrypt keys") || (error.name === 'OperationError' && error.message.toLowerCase().includes("decrypt"))) {
-             alert("Failed to decrypt keys. This is often due to an incorrect passphrase or a corrupted/modified key file.");
+             showToast("Failed to decrypt keys. This is often due to an incorrect passphrase or a corrupted/modified key file.");
         } else if (error.message.includes("Invalid key file format")) {
-            alert(error.message);
+            showToast(error.message);
         }
         else {
-            alert("Error loading keys. The file may be corrupted, invalid, or algorithms may not match. Check console for details.");
+            showToast("Error loading keys. The file may be corrupted, invalid, or algorithms may not match. Check console for details.");
         }
         currentKeyPair = null;
         publicKeyDisplayArea.value = "";
@@ -693,36 +731,36 @@ async function copyPublicKey() {
 
     if (!publicKeyDisplayArea) {
         console.error("Public key display area not found.");
-        alert("Cannot copy public key: display area missing.");
+        showToast("Cannot copy public key: display area missing.");
         return;
     }
 
     const publicKeyText = publicKeyDisplayArea.value;
 
     if (!publicKeyText) {
-        alert("No public key available to copy. Generate or load keys first.");
+        showToast("No public key available to copy. Generate or load keys first.");
         return;
     }
 
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
-        alert("Clipboard API not available. This might be due to an insecure context (HTTP) or browser limitations.");
+        showToast("Clipboard API not available. This might be due to an insecure context (HTTP) or browser limitations.");
         console.warn("navigator.clipboard.writeText is not available.");
         // Fallback for older browsers or insecure contexts (less ideal)
         try {
             publicKeyDisplayArea.select(); // Select the text
             document.execCommand('copy'); // Attempt to copy
             publicKeyDisplayArea.setSelectionRange(0, 0); // Deselect
-            alert("Public key selected. Press Ctrl+C or Cmd+C to copy.");
+            showToast("Public key selected. Press Ctrl+C or Cmd+C to copy.");
         } catch (err) {
             console.error("Fallback copy method failed:", err);
-            alert("Failed to copy public key using fallback. Please copy manually.");
+            showToast("Failed to copy public key using fallback. Please copy manually.");
         }
         return;
     }
 
     try {
         await navigator.clipboard.writeText(publicKeyText);
-        alert("Public key copied to clipboard!");
+        showToast("Public key copied to clipboard!");
 
         if (copyButton) {
             const originalButtonText = copyButton.textContent;
@@ -734,7 +772,7 @@ async function copyPublicKey() {
 
     } catch (error) {
         console.error("Failed to copy public key using Clipboard API:", error);
-        alert("Failed to copy public key. This can sometimes happen if the page doesn't have focus or due to browser security settings. See console for details.");
+        showToast("Failed to copy public key. This can sometimes happen if the page doesn't have focus or due to browser security settings. See console for details.");
     }
 }
 
@@ -745,20 +783,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const ncodeSection = document.getElementById('ncode-section');
     const dcodeSection = document.getElementById('dcode-section');
     const keyPairManagementSection = document.getElementById('key-pair-management-section');
-    const newKeyGenerationElements = document.getElementById('new-key-generation-elements'); // Added
+    const keyGenerationGroupContainer = document.getElementById('key-generation-group-container'); // Changed
 
-    if (modeToggle && ncodeSection && dcodeSection && keyPairManagementSection && newKeyGenerationElements) { // Added newKeyGenerationElements
+    if (modeToggle && ncodeSection && dcodeSection && keyPairManagementSection && keyGenerationGroupContainer) { // Changed
         function updateDisplayMode() {
             keyPairManagementSection.style.display = 'block'; // Ensure parent section is always visible
 
             if (modeToggle.checked) { // DCode mode selected
                 ncodeSection.style.display = 'none';
                 dcodeSection.style.display = 'block';
-                newKeyGenerationElements.style.display = 'none'; // Hide only key GEN specific elements
+                keyGenerationGroupContainer.style.display = 'none'; // Changed
             } else { // NCode mode selected
                 ncodeSection.style.display = 'block';
                 dcodeSection.style.display = 'none';
-                newKeyGenerationElements.style.display = 'block'; // Show key GEN specific elements
+                keyGenerationGroupContainer.style.display = 'block'; // Changed
             }
         }
 
@@ -766,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Set initial state
         updateDisplayMode();
     } else {
-        console.error('One or more transmission mode toggle elements or sections not found! Check IDs: transmission-mode-toggle, ncode-section, dcode-section, key-pair-management-section, new-key-generation-elements');
+        console.error('One or more transmission mode toggle elements or sections not found! Check IDs: transmission-mode-toggle, ncode-section, dcode-section, key-pair-management-section, key-generation-group-container'); // Changed
     }
 
     // Get DOM elements for nCode/dCode Key Management and Workflows

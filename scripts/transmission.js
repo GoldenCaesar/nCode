@@ -642,42 +642,49 @@ async function loadEncryptedKeys() {
 }
 
 function clearLoadedKeys() {
-    const publicKeyDisplayArea = document.getElementById('public-key-display-area');
-    const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
-    const keyGenPassphraseInput = document.getElementById('keyGenPassphraseInput');
-    const keyLoadPassphraseInput = document.getElementById('keyLoadPassphraseInput');
-    const uploadEncryptedKeysInput = document.getElementById('uploadEncryptedKeysInput'); // Assuming this is the ID of the file input for uploading keys
-
     // Reset global variables
     currentKeyPair = null;
     uploadedKeyFileData = null;
 
     // Clear UI Elements
-    if (publicKeyDisplayArea) {
-        publicKeyDisplayArea.value = "";
-    }
-    if (keyGenPassphraseInput) {
-        keyGenPassphraseInput.value = "";
-    }
-    if (keyLoadPassphraseInput) {
-        keyLoadPassphraseInput.value = "";
-    }
+    // Key Management Section related
+    const keyGenPassphraseInput = document.getElementById('keyGenPassphraseInput');
+    if (keyGenPassphraseInput) keyGenPassphraseInput.value = "";
 
-    // Disable Buttons
-    if (copyPublicKeyButton) {
-        copyPublicKeyButton.disabled = true;
-    }
+    const keyLoadPassphraseInput = document.getElementById('keyLoadPassphraseInput');
+    if (keyLoadPassphraseInput) keyLoadPassphraseInput.value = "";
 
-    // Clear File Input
-    if (uploadEncryptedKeysInput) {
-        uploadEncryptedKeysInput.value = null; // This effectively clears the selected file
-    }
+    const uploadEncryptedKeysInput = document.getElementById('uploadEncryptedKeysInput');
+    if (uploadEncryptedKeysInput) uploadEncryptedKeysInput.value = null; // Clears file selection
 
-    // User Feedback (Optional but good)
-    // Consider if an alert is too intrusive for a clear action.
-    // A more subtle notification might be better, or none if the UI changes are obvious.
-    // For now, per plan:
-    alert("Loaded keys and related data have been cleared.");
+    const publicKeyDisplayArea = document.getElementById('public-key-display-area');
+    if (publicKeyDisplayArea) publicKeyDisplayArea.value = "";
+
+    const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
+    if (copyPublicKeyButton) copyPublicKeyButton.disabled = true; // Also disable copy button
+
+    // nCode Workflow Section related
+    const recipientPublicKeyInput = document.getElementById('recipientPublicKeyInput');
+    if (recipientPublicKeyInput) recipientPublicKeyInput.value = "";
+
+    const ncodeFileInput = document.getElementById('ncodeFileInput');
+    if (ncodeFileInput) ncodeFileInput.value = null; // Clears file selection
+
+    const ncodeStringInput = document.getElementById('ncodeStringInput');
+    if (ncodeStringInput) ncodeStringInput.value = "";
+
+    // dCode Workflow Section related
+    const dcodeFileInput = document.getElementById('dcodeFileInput');
+    if (dcodeFileInput) dcodeFileInput.value = null; // Clears file selection
+
+    const dcodeStringOutput = document.getElementById('dcodeStringOutput');
+    if (dcodeStringOutput) dcodeStringOutput.value = "";
+
+    const dcodeFilesOutput = document.getElementById('dcodeFilesOutput');
+    if (dcodeFilesOutput) dcodeFilesOutput.innerHTML = ""; // Clear any generated links or messages
+
+    // No alert needed as per new requirements.
+    // console.log("Loaded keys and related data have been cleared."); // Optional: for debugging
 }
 
 async function copyPublicKey() {
@@ -733,31 +740,30 @@ async function copyPublicKey() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Mode toggle logic (existing)
+    // Mode toggle logic
     const modeToggle = document.getElementById('transmission-mode-toggle');
     const ncodeSection = document.getElementById('ncode-section');
     const dcodeSection = document.getElementById('dcode-section');
+    const keyPairManagementSection = document.getElementById('key-pair-management-section'); // Added
 
-    if (modeToggle && ncodeSection && dcodeSection) {
-        modeToggle.addEventListener('change', function() {
-            if (this.checked) { // DCode mode
+    if (modeToggle && ncodeSection && dcodeSection && keyPairManagementSection) { // Added keyPairManagementSection
+        function updateDisplayMode() {
+            if (modeToggle.checked) { // DCode mode selected
                 ncodeSection.style.display = 'none';
                 dcodeSection.style.display = 'block';
-            } else { // NCode mode
+                keyPairManagementSection.style.display = 'none'; // Hide key management
+            } else { // NCode mode selected
                 ncodeSection.style.display = 'block';
                 dcodeSection.style.display = 'none';
+                keyPairManagementSection.style.display = 'block'; // Show key management
             }
-        });
-        // Set initial state
-        if (modeToggle.checked) {
-            ncodeSection.style.display = 'none';
-            dcodeSection.style.display = 'block';
-        } else {
-            ncodeSection.style.display = 'block';
-            dcodeSection.style.display = 'none';
         }
+
+        modeToggle.addEventListener('change', updateDisplayMode);
+        // Set initial state
+        updateDisplayMode(); // Call the function to set initial state
     } else {
-        console.error('Transmission mode toggle elements not found!');
+        console.error('Transmission mode toggle elements or key pair management section not found!');
     }
 
     // Get DOM elements for nCode/dCode Key Management and Workflows

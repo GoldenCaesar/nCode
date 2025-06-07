@@ -260,10 +260,13 @@
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                 </label>
                 <span class="text-white">dCode</span>
+                <button id="clearKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#f0ad4e] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] ml-3">
+                  <span class="truncate">Clear</span>
+                </button>
               </div>
 
               <!-- Key Pair Management Section -->
-              <div class="border-t border-[#43543b] mt-4 pt-4">
+              <div id="key-pair-management-section" class="border-t border-[#43543b] mt-4 pt-4">
                 <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">Your Key Pair Management</h3>
 
                 <div class="flex px-4 py-3">
@@ -284,10 +287,7 @@
                   <button id="generateAndDownloadKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
                     <span class="truncate">Generate & Encrypt Keys</span>
                   </button>
-                  <!-- This button might be redundant if the above handles download, or might be enabled later. Keeping for now. -->
-                  <button id="download-key-pair-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#5bc0de] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
-                    <span class="truncate">Download Encrypted Key Pair (.nCodeKeys)</span>
-                  </button>
+                  <!-- Redundant button "download-key-pair-button" removed -->
                 </div>
 
                 <div class="border-t border-[#43543b] mt-4 pt-4"></div>
@@ -330,9 +330,8 @@
                     <span class="truncate">Copy Public Key</span>
                   </button>
                   <!-- ID changed -->
-                  <button id="clearKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#f0ad4e] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
-                    <span class="truncate">Clear Loaded Keys</span>
                   </button>
+                  <!-- The clearKeysButton was moved up -->
                 </div>
               </div>
               <!-- End of Key Pair Management Section -->

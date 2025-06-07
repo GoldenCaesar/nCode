@@ -51,6 +51,9 @@
                 <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="javascript:void(0);" onclick="showContent('fileEncryptionContent', this)">
                   <p class="text-[#a6ba9c] text-sm font-bold leading-normal tracking-[0.015em]">File Encryption</p>
                 </a>
+                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#a6ba9c] pb-[13px] pt-4" href="javascript:void(0);" onclick="showContent('transmissionEncryptionContent', this)">
+                  <p class="text-[#a6ba9c] text-sm font-bold leading-normal tracking-[0.015em]">Transmission Encryption</p>
+                </a>
               </div>
             </div>
             <div id="stringEncryptionContent">
@@ -248,6 +251,136 @@
                 <button id="clearFileButton" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#f0ad4e] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em]"><span class="truncate">Clear</span></button>
               </div>
             </div>
+            <div id="transmissionEncryptionContent" style="display:none;">
+              <div class="flex items-center gap-4 px-4 py-3">
+                <span class="text-white">NCode (Encrypt)</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="transmission-mode-toggle" class="sr-only peer">
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                </label>
+                <span class="text-white">DCode (Decrypt)</span>
+              </div>
+
+              <!-- Key Pair Management Section -->
+              <div class="border-t border-[#43543b] mt-4 pt-4">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">Your Key Pair Management</h3>
+
+                <div class="flex px-4 py-3">
+                  <button id="generate-key-pair-button" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Generate New Key Pair</span>
+                  </button>
+                </div>
+
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <input type="password" id="key-protection-passphrase" placeholder="Passphrase for Key Protection (Optional)" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
+                  </label>
+                </div>
+
+                <div class="flex px-4 py-3 gap-2">
+                  <button id="generate-encrypt-keys-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Generate & Encrypt Keys</span>
+                  </button>
+                  <button id="download-key-pair-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#5bc0de] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Download Encrypted Key Pair (.nCodeKeys)</span>
+                  </button>
+                </div>
+
+                <div class="border-t border-[#43543b] mt-4 pt-4"></div>
+
+                <div class="flex px-4 py-3">
+                  <input type="file" id="upload-key-pair-input" style="display: none;" accept=".nCodeKeys"/>
+                  <button onclick="document.getElementById('upload-key-pair-input').click();" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Upload Encrypted Key Pair (.nCodeKeys)</span>
+                  </button>
+                </div>
+
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <input type="password" id="decrypt-key-passphrase" placeholder="Passphrase to Decrypt Key Pair" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
+                  </label>
+                </div>
+
+                <div class="flex px-4 py-3">
+                  <button id="load-key-pair-button" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Load Key Pair</span>
+                  </button>
+                </div>
+
+                <div class="border-t border-[#43543b] mt-4 pt-4"></div>
+
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <p class="text-white text-base font-medium leading-normal pb-1">Loaded Public Key:</p>
+                    <textarea id="public-key-display-area" placeholder="No public key loaded." readonly class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-24 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal" style="overflow: auto"></textarea>
+                  </label>
+                </div>
+
+                <div class="flex px-4 py-3 gap-2">
+                  <button id="copy-public-key-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#5bc0de] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Copy Public Key</span>
+                  </button>
+                  <button id="clear-loaded-keys-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#f0ad4e] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Clear Loaded Keys</span>
+                  </button>
+                </div>
+              </div>
+              <!-- End of Key Pair Management Section -->
+
+              <!-- NCode (Encrypt) Workflow Section -->
+              <div id="ncode-section" class="border-t border-[#43543b] mt-4 pt-4">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">NCode (Encrypt) Workflow</h3>
+
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <p class="text-white text-base font-medium leading-normal pb-1">Recipient's Public Key:</p>
+                    <textarea id="recipient-public-key" placeholder="Paste recipient's public key here" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-24 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal" style="overflow: auto"></textarea>
+                  </label>
+                </div>
+
+                <div class="flex px-4 py-3">
+                  <input type="file" id="ncode-file-input" style="display: none;" />
+                  <button onclick="document.getElementById('ncode-file-input').click();" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Select File to Encrypt (Optional)</span>
+                  </button>
+                </div>
+
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                  <label class="flex flex-col min-w-40 flex-1">
+                     <p class="text-white text-base font-medium leading-normal pb-1">Or Enter String to Encrypt:</p>
+                    <textarea id="ncode-string-input" placeholder="Enter string to encrypt here" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal" style="overflow: auto"></textarea>
+                  </label>
+                </div>
+
+                <div class="flex px-4 py-3 gap-2">
+                  <button id="encrypt-for-transmission-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Encrypt for Transmission</span>
+                  </button>
+                  <button id="download-transmission-button" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#5bc0de] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Download Encrypted Transmission (.nCodeTransmission)</span>
+                  </button>
+                </div>
+              </div>
+              <!-- End of NCode Workflow Section -->
+
+              <!-- DCode (Decrypt) Workflow Section -->
+              <div id="dcode-section" style="display: none;" class="border-t border-[#43543b] mt-4 pt-4">
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">DCode (Decrypt) Workflow</h3>
+
+                <div class="flex px-4 py-3">
+                  <input type="file" id="dcode-upload-transmission-input" style="display: none;" accept=".nCodeTransmission"/>
+                  <button onclick="document.getElementById('dcode-upload-transmission-input').click();" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                    <span class="truncate">Upload .nCodeTransmission File</span>
+                  </button>
+                </div>
+
+                <div id="dcode-results-area" class="px-4 py-3">
+                  <!-- Decrypted content (e.g., text area for string, download button for file) will appear here -->
+                  <p class="text-white text-base font-normal leading-normal">Awaiting decryption...</p>
+                </div>
+              </div>
+              <!-- End of DCode Workflow Section -->
+            </div>
           </div>
         </div>
       </div>
@@ -271,6 +404,8 @@
         if (stringEncryptionContent) stringEncryptionContent.style.display = 'none';
         if (passwordManagerContent) passwordManagerContent.style.display = 'none';
         if (fileEncryptionContent) fileEncryptionContent.style.display = 'none';
+        const transmissionEncryptionContent = document.getElementById('transmissionEncryptionContent');
+        if (transmissionEncryptionContent) transmissionEncryptionContent.style.display = 'none';
 
         // Show the selected content section
         const selectedContent = document.getElementById(contentIdToShow);

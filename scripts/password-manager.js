@@ -121,22 +121,35 @@ $(document).ready(function() {
     // Clear Result Output
     $('#passwordResultOutput').val('');
 
-    // Handle Site Inputs
+    // Clear all site inputs
+    const siteInputs = $('#sitesContainer .site-input');
+    siteInputs.each(function() {
+      $(this).val('');
+    });
+
+    // Handle Site Input Elements
     const sitesContainer = $('#sitesContainer');
+    // Get all div wrappers for site inputs. These are direct children of sitesContainer.
+    // Based on the HTML structure:
+    // <div id="sitesContainer">
+    //   <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3"> <!-- Wrapper for Site 1 -->
+    //     <label class="flex flex-col min-w-40 flex-1">
+    //       <input placeholder="Site 1" class="site-input ..."/>
+    //     </label>
+    //   </div>
+    //   <!-- Dynamically added sites follow the same wrapper structure -->
+    // </div>
+    // So, we target these direct child divs for removal.
     const siteInputWrappers = sitesContainer.children('div.flex.max-w-\[480px\].flex-wrap.items-end.gap-4.px-4.py-3');
 
-    // Clear the first site input
-    if (siteInputWrappers.length > 0) {
-      $(siteInputWrappers[0]).find('.site-input').val('');
+    // Remove additional site input wrappers (all except the first one)
+    // The first one is cleared by the siteInputs.each() loop above and should not be removed.
+    if (siteInputWrappers.length > 1) {
+      siteInputWrappers.slice(1).remove();
     }
-
-    // Remove additional site inputs (all except the first one)
-    siteInputWrappers.slice(1).remove();
 
     // Reset siteCounter
     siteCounter = 1;
-    // Update placeholder of the first site input if necessary, though it's static in HTML
-    // If the placeholder was dynamic like "Site ${siteCounter}", you'd update it here.
-    // For this specific HTML, "Site 1" is hardcoded for the first input.
+    // The placeholder for the first site input is static ("Site 1") and does not need to be updated.
   });
 });

@@ -733,6 +733,7 @@ async function copyPublicKey() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Mode toggle logic (existing)
     const modeToggle = document.getElementById('transmission-mode-toggle');
     const ncodeSection = document.getElementById('ncode-section');
     const dcodeSection = document.getElementById('dcode-section');
@@ -747,10 +748,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 dcodeSection.style.display = 'none';
             }
         });
-
-        // Set initial state based on checkbox default (optional, but good practice)
-        // Assuming NCode is default (checkbox is unchecked)
-        // HTML already has dcode-section hidden by default, so this matches.
+        // Set initial state
         if (modeToggle.checked) {
             ncodeSection.style.display = 'none';
             dcodeSection.style.display = 'block';
@@ -762,20 +760,89 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Transmission mode toggle elements not found!');
     }
 
-    // (Assuming this is appended inside the existing DOMContentLoaded listener)
+    // Get DOM elements for nCode/dCode Key Management and Workflows
+    const generateAndDownloadKeysButton = document.getElementById('generateAndDownloadKeysButton');
+    const uploadEncryptedKeysInput = document.getElementById('uploadEncryptedKeysInput');
+    const loadKeysButton = document.getElementById('loadKeysButton');
+    const clearKeysButton = document.getElementById('clearKeysButton'); // This is the new ID
+    const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
 
-    const clearLoadedKeysButton = document.getElementById('clear-loaded-keys-button');
-    const publicKeyDisplayArea = document.getElementById('public-key-display-area');
-    const uploadKeyPairInput = document.getElementById('upload-key-pair-input');
-    const decryptKeyPassphraseInput = document.getElementById('decrypt-key-passphrase');
+    const encryptAndDownloadButton = document.getElementById('encryptAndDownloadButton');
+    const dcodeFileInput = document.getElementById('dcodeFileInput');
 
-    if (clearLoadedKeysButton && publicKeyDisplayArea && uploadKeyPairInput && decryptKeyPassphraseInput) {
-        clearLoadedKeysButton.addEventListener('click', function() {
-            publicKeyDisplayArea.value = ''; // Clear textarea
-            uploadKeyPairInput.value = ''; // Clear file input
-            decryptKeyPassphraseInput.value = ''; // Clear password input
+    // Attach event listeners for Key Gen & Management
+    if (generateAndDownloadKeysButton) {
+        generateAndDownloadKeysButton.addEventListener('click', generateAndEncryptKeys);
+    } else {
+        console.error('generateAndDownloadKeysButton not found');
+    }
+
+    if (uploadEncryptedKeysInput) {
+        uploadEncryptedKeysInput.addEventListener('change', handleUploadEncryptedKeys);
+    } else {
+        console.error('uploadEncryptedKeysInput not found');
+    }
+
+    if (loadKeysButton) {
+        loadKeysButton.addEventListener('click', loadEncryptedKeys);
+    } else {
+        console.error('loadKeysButton not found');
+    }
+
+    if (clearKeysButton) { // Using the new ID
+        clearKeysButton.addEventListener('click', clearLoadedKeys);
+    } else {
+        console.error('clearKeysButton not found');
+    }
+
+    if (copyPublicKeyButton) {
+        copyPublicKeyButton.addEventListener('click', copyPublicKey);
+    } else {
+        console.error('copyPublicKeyButton not found');
+    }
+
+    // Attach event listeners for NCode (Encryption)
+    if (encryptAndDownloadButton) {
+        encryptAndDownloadButton.addEventListener('click', encryptTransmission);
+    } else {
+        console.error('encryptAndDownloadButton not found');
+    }
+
+    // Attach event listeners for DCode (Decryption)
+    if (dcodeFileInput) {
+        dcodeFileInput.addEventListener('change', decryptTransmission);
+    } else {
+        console.error('dcodeFileInput not found');
+    }
+
+    // Initial UI setup
+    // Disable buttons that require keys or specific conditions to be met
+    if (copyPublicKeyButton) {
+        copyPublicKeyButton.disabled = true; // Disabled until a public key is loaded/generated
+    }
+
+    // const publicKeyDisplayArea = document.getElementById('public-key-display-area');
+    // const oldClearLoadedKeysButton = document.getElementById('clear-loaded-keys-button'); // Old ID
+    // const oldUploadKeyPairInput = document.getElementById('upload-key-pair-input'); // Old ID
+    // const oldDecryptKeyPassphraseInput = document.getElementById('decrypt-key-passphrase'); // Old ID
+
+    // The following block was part of the original script.
+    // It targets elements by their OLD IDs.
+    // Since `clearKeysButton` (new ID) now calls `clearLoadedKeys` which is more comprehensive,
+    // this specific listener for 'clear-loaded-keys-button' (old ID) can be removed.
+    // If other functionality relied on these old IDs, it would need updating.
+    // For now, we assume the new event listeners cover the intended functionality with new IDs.
+    /*
+    if (oldClearLoadedKeysButton && publicKeyDisplayArea && oldUploadKeyPairInput && oldDecryptKeyPassphraseInput) {
+        oldClearLoadedKeysButton.addEventListener('click', function() {
+            // This is now handled by clearKeysButton -> clearLoadedKeys()
+            // publicKeyDisplayArea.value = '';
+            // oldUploadKeyPairInput.value = '';
+            // oldDecryptKeyPassphraseInput.value = '';
+            console.log("Old clear button listener called - should be removed or updated if clearKeysButton is working.");
         });
     } else {
-        console.error('Clear loaded keys button or associated elements not found!');
+        // console.error('Old clear loaded keys button or its associated elements not found! This might be okay if new clearKeysButton is used.');
     }
+    */
 });

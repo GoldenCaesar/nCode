@@ -272,6 +272,17 @@
               </div>
             </div>
             <div id="transmissionEncryptionContent" style="display:none;">
+              <div class="flex items-center justify-start px-4 pb-3 pt-1">
+                <p class="text-white text-base font-normal leading-normal">This tab is for encrypting and decrypting data for secure transmission. It uses asymmetric encryption (ECIES) to ensure that only the intended recipient with the corresponding private key can decrypt the data.</p>
+                <button id="helpButtonTransmissionEncryption" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[-0.015em] min-w-0 p-0" style="margin-left: 8px;"><div class="text-white" data-icon="Question" data-size="24px" data-weight="regular"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg></div></button>
+              </div>
+              <p id="transmissionEncryptionHelpText" class="text-white text-sm font-normal leading-normal px-4 py-2 bg-[#1f271b] rounded mt-2 mx-4" style="display: none;">
+                <strong>Transmission Encryption Help:</strong><br>
+                This section is for exchanging encrypted data with others. It uses ECIES (Elliptic Curve Integrated Encryption Scheme), a form of asymmetric cryptography.<br>
+                <strong>Key Pair Management:</strong> Generate a new key pair (public and private keys) and protect it with a passphrase. The keys are encrypted and downloaded. You can also upload an existing encrypted key pair and decrypt it with its passphrase to load your keys into the application. Your public key can be shared with others so they can encrypt data for you. Your private key must be kept secret and is required for decryption.<br>
+                <strong>nCode Workflow (Encrypting for others):</strong> Paste the recipient's public key, then either select a file or type/paste a string to encrypt. The output will be a .nCodeTransmission file, which you can send to the recipient.<br>
+                <strong>dCode Workflow (Decrypting received data):</strong> If you have your key pair loaded (private key is available), upload the .nCodeTransmission file. The decrypted content (string or file download link) will appear.
+              </p>
               <div class="flex items-center gap-4 px-4 py-3">
                 <span class="text-white">nCode</span>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -503,6 +514,7 @@
         toggleHelpText('helpButtonStringEncryption', 'stringEncryptionHelpText');
         toggleHelpText('helpButtonPasswordManager', 'passwordManagerHelpText');
         toggleHelpText('helpButtonFileEncryption', 'fileEncryptionHelpText');
+        toggleHelpText('helpButtonTransmissionEncryption', 'transmissionEncryptionHelpText');
 
         // Also, ensure help text is hidden when tabs are switched
         // This needs to be part of the same DOMContentLoaded or a subsequent one.
@@ -517,7 +529,8 @@
                 const allHelpTexts = [
                     document.getElementById('stringEncryptionHelpText'),
                     document.getElementById('passwordManagerHelpText'),
-                    document.getElementById('fileEncryptionHelpText')
+                    document.getElementById('fileEncryptionHelpText'),
+                    document.getElementById('transmissionEncryptionHelpText')
                 ];
                 allHelpTexts.forEach(helpText => {
                     if (helpText && helpText.style.display !== 'none') { // Check if it's not already none

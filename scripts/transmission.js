@@ -744,26 +744,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const modeToggle = document.getElementById('transmission-mode-toggle');
     const ncodeSection = document.getElementById('ncode-section');
     const dcodeSection = document.getElementById('dcode-section');
-    const keyPairManagementSection = document.getElementById('key-pair-management-section'); // Added
+    const keyPairManagementSection = document.getElementById('key-pair-management-section');
+    const newKeyGenerationElements = document.getElementById('new-key-generation-elements'); // Added
 
-    if (modeToggle && ncodeSection && dcodeSection && keyPairManagementSection) { // Added keyPairManagementSection
+    if (modeToggle && ncodeSection && dcodeSection && keyPairManagementSection && newKeyGenerationElements) { // Added newKeyGenerationElements
         function updateDisplayMode() {
+            keyPairManagementSection.style.display = 'block'; // Ensure parent section is always visible
+
             if (modeToggle.checked) { // DCode mode selected
                 ncodeSection.style.display = 'none';
                 dcodeSection.style.display = 'block';
-                keyPairManagementSection.style.display = 'none'; // Hide key management
+                newKeyGenerationElements.style.display = 'none'; // Hide only key GEN specific elements
             } else { // NCode mode selected
                 ncodeSection.style.display = 'block';
                 dcodeSection.style.display = 'none';
-                keyPairManagementSection.style.display = 'block'; // Show key management
+                newKeyGenerationElements.style.display = 'block'; // Show key GEN specific elements
             }
         }
 
         modeToggle.addEventListener('change', updateDisplayMode);
         // Set initial state
-        updateDisplayMode(); // Call the function to set initial state
+        updateDisplayMode();
     } else {
-        console.error('Transmission mode toggle elements or key pair management section not found!');
+        console.error('One or more transmission mode toggle elements or sections not found! Check IDs: transmission-mode-toggle, ncode-section, dcode-section, key-pair-management-section, new-key-generation-elements');
     }
 
     // Get DOM elements for nCode/dCode Key Management and Workflows

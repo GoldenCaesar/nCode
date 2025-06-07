@@ -269,25 +269,21 @@
               <div id="key-pair-management-section" class="border-t border-[#43543b] mt-4 pt-4">
                 <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2">Your Key Pair Management</h3>
 
-                <div class="flex px-4 py-3">
-                  <button id="generate-key-pair-button" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#2e3928] text-white text-sm font-bold leading-normal tracking-[0.015em] flex-1">
-                    <span class="truncate">Generate New Key Pair</span>
-                  </button>
-                </div>
+                <!-- This h3 replaces the generate-key-pair-button -->
+                <h3 class="text-white text-md font-bold leading-tight tracking-[-0.015em] px-4 py-3">Generate New Key Pair</h3>
 
-                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                  <label class="flex flex-col min-w-40 flex-1">
-                    <!-- ID changed -->
-                    <input type="password" id="keyGenPassphraseInput" placeholder="Passphrase for Key Protection (Optional)" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
-                  </label>
-                </div>
+                <div id="new-key-generation-elements">
+                  <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                    <label class="flex flex-col min-w-40 flex-1">
+                      <input type="password" id="keyGenPassphraseInput" placeholder="Passphrase for Key Protection (Optional)" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] h-14 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal"/>
+                    </label>
+                  </div>
 
-                <div class="flex px-4 py-3 gap-2">
-                  <!-- ID changed -->
-                  <button id="generateAndDownloadKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
-                    <span class="truncate">Generate & Encrypt Keys</span>
-                  </button>
-                  <!-- Redundant button "download-key-pair-button" removed -->
+                  <div class="flex px-4 py-3 gap-2">
+                    <button id="generateAndDownloadKeysButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
+                      <span class="truncate">Generate & Encrypt Keys</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div class="border-t border-[#43543b] mt-4 pt-4"></div>

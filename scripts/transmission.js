@@ -201,8 +201,8 @@ async function decryptTransmission(event) {
         return;
     }
 
-    if (!file.name.endsWith('.nCodeTransmission')) {
-        showToast("Invalid file type. Please select a '.nCodeTransmission' file.");
+    if (!(file.name.endsWith('.nCodeTransmission') || file.name.endsWith('.json'))) {
+        showToast("Invalid file type. Please select a '.nCodeTransmission' or '.json' file.");
         event.target.value = null; // Clear the file input
         return;
     }
@@ -505,8 +505,8 @@ function handleUploadEncryptedKeys(event) {
         return;
     }
 
-    if (!file.name.endsWith('.nCodeKeys')) {
-        showToast("Please select a valid '.nCodeKeys' file.");
+    if (!(file.name.endsWith('.nCodeKeys') || file.name.endsWith('.json'))) {
+        showToast("Please select a valid '.nCodeKeys' or '.json' file.");
         event.target.value = null; // Clear the file input
         uploadedKeyFileData = null;
         return;

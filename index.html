@@ -33,6 +33,19 @@
         opacity: 0.9;
         transition: opacity 0.5s ease-out;
       }
+      .goldhash-result {
+        margin-top: 5px;
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: #f0f0f0; /* Light grey background */
+        border: 1px solid #ddd;   /* Light grey border */
+        border-radius: 4px;
+        font-family: monospace;   /* Monospaced font for hash */
+        font-size: 0.9em;
+        color: #333;             /* Dark grey text */
+        word-wrap: break-word;    /* Wrap long hash strings */
+        min-height: 1.2em; /* Ensure it has some height even when empty */
+      }
     </style>
     <title>nCode</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -315,6 +328,7 @@
                         <span class="truncate">Generate & Encrypt Keys</span>
                       </button>
                     </div>
+                    <div class="goldhash-result" id="keyGenGoldhashResult"></div>
                   </div>
                 </div>
 
@@ -341,6 +355,7 @@
                     <span class="truncate">Load Key Pair</span>
                   </button>
                 </div>
+                <div class="goldhash-result" id="keyLoadGoldhashResult"></div>
 
                 <div class="border-t border-[#43543b] mt-4 pt-4"></div>
 
@@ -391,7 +406,7 @@
                     <textarea id="ncodeStringInput" placeholder="Enter string to encrypt here" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-white focus:outline-0 focus:ring-0 border border-[#43543b] bg-[#1f271b] focus:border-[#43543b] min-h-36 placeholder:text-[#a6ba9c] p-[15px] text-base font-normal leading-normal" style="overflow: auto"></textarea>
                   </label>
                 </div>
-
+                <div class="goldhash-result" id="ncodeGoldhashResult" style="margin-top: 10px;"></div>
                 <div class="flex px-4 py-3 gap-2">
                   <!-- ID changed -->
                   <button id="encryptAndDownloadButton" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 px-4 bg-[#47c10a] text-[#131811] text-sm font-bold leading-normal tracking-[0.015em] flex-1">
@@ -423,6 +438,7 @@
                   <div id="dcodeFilesOutput" placeholder="Download links for decrypted files will appear here..."></div>
                   <p id="awaiting-decryption-message" class="text-white text-base font-normal leading-normal">Awaiting decryption...</p> <!-- This can be removed or hidden by JS later -->
                 </div>
+                <div class="goldhash-result" id="dcodeGoldhashResult" style="margin-top: 10px;"></div>
               </div>
               <!-- End of DCode Workflow Section -->
             </div>

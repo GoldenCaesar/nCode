@@ -1,5 +1,6 @@
 let currentKeyPair = null;
 let uploadedKeyFileData = null;
+let currentUserPassphraseForGoldhash = null;
 
 function showToast(message, duration = 5000) {
     const container = document.getElementById('toast-container');
@@ -64,6 +65,9 @@ async function generateAndEncryptKeys() {
     const loadedPublicKeyDisplay = document.getElementById('loadedPublicKeyDisplay'); // This ID was from the plan, but in HTML it's 'public-key-display-area'
     const publicKeyDisplayArea = document.getElementById('public-key-display-area'); // Corrected ID
     const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
+    const keyGenGoldhashResultEl = document.getElementById('keyGenGoldhashResult');
+
+    if (keyGenGoldhashResultEl) keyGenGoldhashResultEl.textContent = '';
 
     if (!keyGenPassphraseInput || !publicKeyDisplayArea || !copyPublicKeyButton) {
         showToast("Required UI elements for key generation are missing. Please check the page structure.");
@@ -117,6 +121,20 @@ async function generateAndEncryptKeys() {
         // Export Private Key (JWK)
         const privateKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
 
+        // Calculate and display Goldhash for Key Generation
+        if (typeof calculateGoldhash === 'function') {
+            try {
+                const goldhashValue = await calculateGoldhash(JSON.stringify(privateKeyJwk), passphrase);
+                if (keyGenGoldhashResultEl) keyGenGoldhashResultEl.textContent = goldhashValue;
+            } catch (ghError) {
+                console.error("Error calculating goldhash for key generation:", ghError);
+                if (keyGenGoldhashResultEl) keyGenGoldhashResultEl.textContent = "goldhash: error during calculation";
+            }
+        } else {
+            if (keyGenGoldhashResultEl) keyGenGoldhashResultEl.textContent = "goldhash: calculation function not available";
+            console.error("calculateGoldhash function is not defined.");
+        }
+
         // Encrypt Private Key
         const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM recommended IV size
         const encryptedPrivateKey = await window.crypto.subtle.encrypt(
@@ -150,7 +168,8 @@ async function generateAndEncryptKeys() {
         publicKeyDisplayArea.value = JSON.stringify(publicKeyJwk, null, 2);
         copyPublicKeyButton.disabled = false;
 
-        // Clear Passphrase
+        // Store passphrase for goldhash use in nCode/dCode, then clear input
+        currentUserPassphraseForGoldhash = passphrase;
         keyGenPassphraseInput.value = "";
 
         showToast("Keys generated, encrypted, and download initiated!");
@@ -158,6 +177,7 @@ async function generateAndEncryptKeys() {
     } catch (error) {
         console.error("Key generation/encryption failed:", error);
         showToast("Error generating keys. Check console for details. Ensure you are using a secure context (HTTPS or localhost).");
+        if (keyGenGoldhashResultEl) keyGenGoldhashResultEl.textContent = 'goldhash: error during key generation';
     }
 }
 
@@ -176,6 +196,9 @@ async function decryptTransmission(event) {
     const dcodeStringOutput = document.getElementById('dcodeStringOutput');
     const dcodeFilesOutput = document.getElementById('dcodeFilesOutput');
     const awaitingMessage = document.getElementById('awaiting-decryption-message');
+    const dcodeGoldhashResultEl = document.getElementById('dcodeGoldhashResult');
+
+    if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = '';
 
     // Clear previous results and show awaiting message
     if (dcodeStringOutput) dcodeStringOutput.value = '';
@@ -184,26 +207,39 @@ async function decryptTransmission(event) {
 
     if (!dcodeStringOutput || !dcodeFilesOutput) { // awaitingMessage can be optional
         showToast("Required UI elements for decryption output are missing. Please check the page structure.");
-        if (awaitingMessage) awaitingMessage.style.display = 'none'; // Hide if critical elements missing
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: UI error';
         return;
     }
 
     if (!currentKeyPair || !currentKeyPair.privateKey) {
         showToast("Please load your encrypted key pair first. The private key is needed for decryption.");
         if(event && event.target) event.target.value = null; // Clear file input
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: key pair not loaded';
+        return;
+    }
+
+    if (!currentUserPassphraseForGoldhash) {
+        showToast("Passphrase for goldhash is not available. Ensure keys were loaded correctly with a passphrase.");
+        if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: passphrase not set';
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        if(event && event.target) event.target.value = null;
         return;
     }
 
     const file = event.target.files[0];
     if (!file) {
-        // This can happen if the user cancels file selection
-        // alert("Please select a '.nCodeTransmission' file to decrypt.");
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        // No specific goldhash message needed if no file is selected by user.
         return;
     }
 
     if (!(file.name.endsWith('.nCodeTransmission') || file.name.endsWith('.json'))) {
         showToast("Invalid file type. Please select a '.nCodeTransmission' or '.json' file.");
         event.target.value = null; // Clear the file input
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: invalid file type';
         return;
     }
 
@@ -211,6 +247,8 @@ async function decryptTransmission(event) {
         showToast("JSZip library is not loaded. Decryption cannot proceed.");
         console.error("JSZip is not defined. Please ensure the library is included in your HTML.");
         event.target.value = null;
+        if (awaitingMessage) awaitingMessage.style.display = 'none';
+        if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: JSZip not loaded';
         return;
     }
 
@@ -223,6 +261,8 @@ async function decryptTransmission(event) {
             showToast("Invalid transmission file format (not valid JSON).");
             console.error("JSON Parsing Error:", e);
             event.target.value = null;
+            if (awaitingMessage) awaitingMessage.style.display = 'none';
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: invalid JSON format';
             return;
         }
 
@@ -237,11 +277,15 @@ async function decryptTransmission(event) {
         if (!b64EncryptedData || !b64EncryptedSessionKey || !b64Iv || !sessionKeyParams) {
             showToast("Invalid transmission file content: missing required encrypted data, session key, IV, or session key parameters.");
             event.target.value = null;
+            if (awaitingMessage) awaitingMessage.style.display = 'none';
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: missing transmission content';
             return;
         }
         if (transmissionVersion !== "1.0") {
             showToast(`Unsupported transmission version: ${transmissionVersion}. Expected "1.0".`);
             event.target.value = null;
+            if (awaitingMessage) awaitingMessage.style.display = 'none';
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: unsupported version';
             return;
         }
 
@@ -285,9 +329,25 @@ async function decryptTransmission(event) {
             );
         } catch (aesError) {
             console.error("AES Decryption (Data) Error:", aesError);
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: data decryption failed';
             throw new Error("Failed to decrypt data using the session key. The data might be corrupted or the session key decryption failed silently.");
         }
 
+        // Calculate and display Goldhash for dCode
+        if (decryptedZipData && typeof calculateGoldhash === 'function') {
+            try {
+                const goldhashValue = await calculateGoldhash(decryptedZipData, currentUserPassphraseForGoldhash);
+                if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = goldhashValue + " (for entire decrypted archive)";
+            } catch (ghError) {
+                console.error("Error calculating goldhash for dCode:", ghError);
+                if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = "goldhash: error during calculation";
+            }
+        } else if (!decryptedZipData) { // Should ideally not be reached if aesError is caught
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = 'goldhash: no decrypted data to hash';
+        } else { // calculateGoldhash function not available
+            if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = "goldhash: calculation function not available";
+            console.error("calculateGoldhash function is not defined.");
+        }
 
         // Handle Decrypted Output (JSZip)
         const zip = await JSZip.loadAsync(decryptedZipData);
@@ -350,6 +410,9 @@ async function decryptTransmission(event) {
         if (dcodeStringOutput) dcodeStringOutput.value = '';
         if (dcodeFilesOutput) dcodeFilesOutput.innerHTML = '';
         if (awaitingMessage) awaitingMessage.style.display = 'block'; // Or 'inline'
+        if (dcodeGoldhashResultEl && !dcodeGoldhashResultEl.textContent) { // Avoid overwriting specific messages
+            dcodeGoldhashResultEl.textContent = 'goldhash: error during transmission decryption';
+        }
 
         if(event && event.target) event.target.value = null; // Clear file input
     }
@@ -360,9 +423,18 @@ async function encryptTransmission() {
     const recipientPublicKeyInput = document.getElementById('recipientPublicKeyInput');
     const ncodeStringInput = document.getElementById('ncodeStringInput');
     const ncodeFileInput = document.getElementById('ncodeFileInput');
+    const ncodeGoldhashResultEl = document.getElementById('ncodeGoldhashResult');
+
+    if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = '';
 
     if (!recipientPublicKeyInput || !ncodeStringInput || !ncodeFileInput) {
         showToast("One or more UI elements for encryption are missing. Please check the page setup.");
+        return;
+    }
+
+    if (!currentUserPassphraseForGoldhash) {
+        showToast("Passphrase for goldhash is not available. Please generate or load keys again.");
+        if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = 'goldhash: passphrase not set';
         return;
     }
 
@@ -380,13 +452,44 @@ async function encryptTransmission() {
         return;
     }
 
+    // Goldhash calculation for string or file
+    let dataForGoldhash = null;
+    let originalDataName = "string_content"; // Default for string
+
+    if (stringToEncrypt) {
+        dataForGoldhash = stringToEncrypt;
+    } else if (fileToEncrypt) {
+        try {
+            dataForGoldhash = await fileToEncrypt.arrayBuffer(); // This makes encryptTransmission async if it wasn't already
+            originalDataName = fileToEncrypt.name;
+        } catch (fileReadError) {
+            console.error("Error reading file for goldhash:", fileReadError);
+            if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = 'goldhash: error reading file';
+            return; // Exit if file read fails
+        }
+    }
+
+    if (dataForGoldhash && typeof calculateGoldhash === 'function') {
+        try {
+            const goldhashValue = await calculateGoldhash(dataForGoldhash, currentUserPassphraseForGoldhash);
+            if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = goldhashValue + (fileToEncrypt ? ` (for: ${originalDataName})` : '');
+        } catch (ghError) {
+            console.error("Error calculating goldhash for nCode:", ghError);
+            if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = "goldhash: error during calculation";
+        }
+    } else if (!dataForGoldhash) {
+        if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = 'goldhash: no data to hash';
+    } else { // calculateGoldhash function not available
+        if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = "goldhash: calculation function not available";
+        console.error("calculateGoldhash function is not defined.");
+    }
+
     // Check if JSZip is available
     if (typeof JSZip === 'undefined') {
         showToast("JSZip library is not loaded. Encryption cannot proceed.");
         console.error("JSZip is not defined. Please ensure the library is included in your HTML.");
         return;
     }
-
 
     try {
         let recipientPublicKey;
@@ -495,6 +598,9 @@ async function encryptTransmission() {
     } catch (error) {
         console.error("Encryption failed:", error);
         showToast(`Encryption failed: ${error.message}. Check console for details.`);
+        if (ncodeGoldhashResultEl && !ncodeGoldhashResultEl.textContent) { // Avoid overwriting specific goldhash error
+            ncodeGoldhashResultEl.textContent = 'goldhash: error during transmission encryption';
+        }
     }
 }
 
@@ -554,6 +660,9 @@ async function loadEncryptedKeys() {
     const keyLoadPassphraseInput = document.getElementById('keyLoadPassphraseInput');
     const publicKeyDisplayArea = document.getElementById('public-key-display-area'); // Corrected ID
     const copyPublicKeyButton = document.getElementById('copyPublicKeyButton');
+    const keyLoadGoldhashResultEl = document.getElementById('keyLoadGoldhashResult');
+
+    if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = '';
 
     if (!keyLoadPassphraseInput || !publicKeyDisplayArea || !copyPublicKeyButton) {
         showToast("Required UI elements for key loading are missing.");
@@ -563,11 +672,13 @@ async function loadEncryptedKeys() {
     const passphrase = keyLoadPassphraseInput.value;
     if (!passphrase) {
         showToast("Please enter a passphrase to decrypt the keys.");
+        if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = ''; // Clear if exiting early
         return;
     }
 
     if (!uploadedKeyFileData) {
         showToast("No key file loaded. Please upload a '.nCodeKeys' file first using the 'Upload Encrypted Key Pair' button.");
+        if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = ''; // Clear if exiting early
         return;
     }
 
@@ -631,7 +742,22 @@ async function loadEncryptedKeys() {
         } catch (decryptionError) {
             // This is often where a wrong passphrase error will manifest
             console.error("Decryption failed, likely incorrect passphrase:", decryptionError);
+            if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = 'goldhash: decryption failed';
             throw new Error("Failed to decrypt keys. Incorrect passphrase or corrupted file.");
+        }
+
+        // Calculate and display Goldhash for Key Load
+        if (typeof calculateGoldhash === 'function') {
+            try {
+                const goldhashValue = await calculateGoldhash(decryptedPrivateKeyJwkString, passphrase);
+                if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = goldhashValue;
+            } catch (ghError) {
+                console.error("Error calculating goldhash for key load:", ghError);
+                if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = "goldhash: error during calculation";
+            }
+        } else {
+            if (keyLoadGoldhashResultEl) keyLoadGoldhashResultEl.textContent = "goldhash: calculation function not available";
+            console.error("calculateGoldhash function is not defined.");
         }
 
         const privateKeyJwk = JSON.parse(decryptedPrivateKeyJwkString);
@@ -658,12 +784,16 @@ async function loadEncryptedKeys() {
         currentKeyPair = { privateKey: importedPrivateKey, publicKey: importedPublicKey };
         publicKeyDisplayArea.value = JSON.stringify(publicKeyJwk, null, 2);
         copyPublicKeyButton.disabled = false;
+        currentUserPassphraseForGoldhash = passphrase; // Store for goldhash in nCode/dCode
         keyLoadPassphraseInput.value = ""; // Clear passphrase
 
         showToast("Keys successfully loaded and decrypted!");
 
     } catch (error) {
         console.error("Key loading/decryption failed:", error);
+        if (keyLoadGoldhashResultEl && !keyLoadGoldhashResultEl.textContent) { // Avoid overwriting specific decryption failure message
+            keyLoadGoldhashResultEl.textContent = 'goldhash: error during key loading';
+        }
         if (error.message.includes("Failed to decrypt keys") || (error.name === 'OperationError' && error.message.toLowerCase().includes("decrypt"))) {
              showToast("Failed to decrypt keys. This is often due to an incorrect passphrase or a corrupted/modified key file.");
         } else if (error.message.includes("Invalid key file format")) {
@@ -683,6 +813,7 @@ function clearLoadedKeys() {
     // Reset global variables
     currentKeyPair = null;
     uploadedKeyFileData = null;
+    currentUserPassphraseForGoldhash = null;
 
     // Clear UI Elements
     // Key Management Section related
@@ -720,6 +851,11 @@ function clearLoadedKeys() {
 
     const dcodeFilesOutput = document.getElementById('dcodeFilesOutput');
     if (dcodeFilesOutput) dcodeFilesOutput.innerHTML = ""; // Clear any generated links or messages
+
+    const ncodeGoldhashResultEl = document.getElementById('ncodeGoldhashResult');
+    if (ncodeGoldhashResultEl) ncodeGoldhashResultEl.textContent = '';
+    const dcodeGoldhashResultEl = document.getElementById('dcodeGoldhashResult');
+    if (dcodeGoldhashResultEl) dcodeGoldhashResultEl.textContent = '';
 
     // No alert needed as per new requirements.
     // console.log("Loaded keys and related data have been cleared."); // Optional: for debugging
